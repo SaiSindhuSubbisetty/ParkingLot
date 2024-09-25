@@ -3,20 +3,12 @@ package org.example;
 import java.util.Objects;
 
 public class Car {
-    private final String registrationNumber;
-    private final Color color;
+    final String registrationNumber;
+    final Color color;
 
     public Car(String registrationNumber, Color color) {
         this.registrationNumber = registrationNumber;
         this.color = color;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public String getRegistrationNumber() {
-        return registrationNumber;
     }
 
     @Override

@@ -39,11 +39,11 @@ public class ParkingLot {
         }
         Slot nearestSlot = findNearestSlot();
         nearestSlot.park(car);
-        return new Ticket(nearestSlot.getSlotNumber(), ticketCounter.incrementAndGet());
+        return new Ticket(nearestSlot.slotNumber, ticketCounter.incrementAndGet());
     }
 
     public Car unpark(Ticket ticket) {
-        int slotNumber = ticket.getSlotNumber();
+        int slotNumber = ticket.slotNumber;
         if (slotNumber >= 0 && slotNumber < totalSlots) {
             Slot slot = slots.get(slotNumber);
             if (!slot.isFree()) {
@@ -55,7 +55,7 @@ public class ParkingLot {
 
     public boolean isCarParked(Car car) {
         for (Slot slot : slots) {
-            if (slot.getCar() != null && slot.getCar().equals(car)) {
+            if (slot.car != null && slot.car.equals(car)) {
                 return true;
             }
         }
@@ -74,8 +74,8 @@ public class ParkingLot {
     public int countCarsByColor(Color color) {
         int count = 0;
         for (Slot slot : slots) {
-            Car car = slot.getCar();
-            if (car != null && car.getColor() == color) {
+            Car car = slot.car;
+            if (car != null && car.color == color) {
                 count++;
             }
         }

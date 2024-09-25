@@ -9,8 +9,8 @@ class CarTest {
     void testCarCreation() {
         Car car = new Car("AP-1234", Color.RED);
         assertNotNull(car, "Car object should not be null");
-        assertEquals("AP-1234", car.getRegistrationNumber(), "Registration number should match");
-        assertEquals(Color.RED, car.getColor());
+        assertEquals("AP-1234", car.registrationNumber, "Registration number should match");
+        assertEquals(Color.RED, car.color);
     }
 
     @Test

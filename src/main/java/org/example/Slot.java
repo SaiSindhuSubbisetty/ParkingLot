@@ -4,8 +4,8 @@ import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.SlotIsOccupiedException;
 
 class Slot {
-    private Car car;
-    private final int slotNumber;
+    Car car;
+    final int slotNumber;
 
     public Slot(int slotNumber) {
         this.slotNumber = slotNumber;
@@ -16,20 +16,11 @@ class Slot {
         return this.car == null;
     }
 
-    public Car getCar() {
-        return car;
-    }
-
-    public int getSlotNumber() {
-        return slotNumber;
-    }
-
-    public String park(Car car) throws SlotIsOccupiedException {
+    public void park(Car car) throws SlotIsOccupiedException {
         if (!this.isFree()) {
             throw new SlotIsOccupiedException("Slot is already occupied.");
         }
         this.car = car;
-        return null;
     }
 
     public Car unPark() throws CarNotFoundException {
