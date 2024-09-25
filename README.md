@@ -1,6 +1,6 @@
 ### ParkingLot
 
-##Story 1:
+Story 1:
 
 1 As a parking lot owner I should be able to create a praking lot with a given number of slots
 
@@ -14,7 +14,7 @@
 
 6 As a parking lot owner I need to check if a car with a given registration number is parked in my parking lot
 
-##Story 2:
+Story 2:
 
 1 As a parking lot owner I should be able to assign my parking lot to a parking lot attendant
 
