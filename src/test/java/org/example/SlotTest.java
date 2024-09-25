@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.Exceptions.CarNotFoundException;
+import org.example.Exceptions.SlotIsOccupiedException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,8 +17,7 @@ class SlotTest {
     void testParkCarInFreeSlot() throws SlotIsOccupiedException {
         Slot slot = new Slot(1);
         Car car = new Car("AP-1234", Color.RED);
-        String ticket = slot.park(car);
-        assertNotNull(ticket, "Ticket should not be null");
+        slot.park(car);
         assertFalse(slot.isFree());
     }
 
@@ -34,7 +35,7 @@ class SlotTest {
         Slot slot = new Slot(1);
         Car car = new Car("AP-1234", Color.RED);
         slot.park(car);
-        Car unparkedCar = slot.unPark("Ticket-1234");
+        Car unparkedCar = slot.unPark();
         assertEquals(car, unparkedCar);
         assertTrue(slot.isFree());
     }
@@ -42,21 +43,12 @@ class SlotTest {
     @Test
     void testCannotUnparkCarFromFreeSlot() {
         Slot slot = new Slot(1);
-        assertThrows(CarNotFoundException.class, () -> slot.unPark("Ticket-1234"));
+        assertThrows(CarNotFoundException.class, () -> slot.unPark());
     }
 
     @Test
     void testGetSlotNumber() {
         Slot slot = new Slot(1);
         assertEquals(1, slot.getSlotNumber());
-    }
-
-    @Test
-    void testGetCars() throws SlotIsOccupiedException {
-        Slot slot = new Slot(1);
-        Car car = new Car("AP-1234", Color.RED);
-        slot.park(car);
-        assertEquals(1, slot.getCars().size());
-        assertEquals(car, slot.getCars().get(0));
     }
 }

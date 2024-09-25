@@ -1,5 +1,8 @@
 package org.example;
 
+import org.example.Exceptions.CarAlreadyParkedException;
+import org.example.Exceptions.CarNotFoundException;
+import org.example.Exceptions.ParkingLotAlreadyAssignmentException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,14 +11,14 @@ class AttendentTest {
     @Test
     void testAssignParkingLotToAttendent() {
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(1, "Lot1");
+        ParkingLot parkingLot = new ParkingLot(1);
         assertDoesNotThrow(() -> attendent.assign(parkingLot));
     }
 
     @Test
     void testAssignTwoParkingLotsToAttendent() {
-        ParkingLot firstParkingLot = new ParkingLot(1, "Lot1");
-        ParkingLot secondParkingLot = new ParkingLot(1, "Lot2");
+        ParkingLot firstParkingLot = new ParkingLot(1);
+        ParkingLot secondParkingLot = new ParkingLot(1);
         Attendent attendent = new Attendent();
         attendent.assign(firstParkingLot);
         assertDoesNotThrow(() -> attendent.assign(secondParkingLot));
@@ -23,16 +26,17 @@ class AttendentTest {
 
     @Test
     void testCannotAssignSameParkingLotTwice() {
-        ParkingLot parkingLot = new ParkingLot(1, "Lot1");
+        ParkingLot parkingLot = new ParkingLot(1);
         Attendent attendent = new Attendent();
         attendent.assign(parkingLot);
+
         assertThrows(ParkingLotAlreadyAssignmentException.class, () -> attendent.assign(parkingLot));
     }
 
     @Test
     void testAttendantParksCarAndReturnsTicket() {
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(2, "Lot1");
+        ParkingLot parkingLot = new ParkingLot(2);
         attendent.assign(parkingLot);
         Car car = new Car("AP-1234", Color.RED);
         Ticket ticket = attendent.park(car);
@@ -43,7 +47,7 @@ class AttendentTest {
     @Test
     void testAttendantUnparksCarWithTicket() {
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(2, "Lot1");
+        ParkingLot parkingLot = new ParkingLot(2);
         attendent.assign(parkingLot);
         Car car = new Car("AP-1234", Color.RED);
         Ticket ticket = attendent.park(car);
@@ -55,18 +59,18 @@ class AttendentTest {
     @Test
     void testAttendantUnparksCarWithInvalidTicket() {
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(2, "Lot1");
+        ParkingLot parkingLot = new ParkingLot(2);
         attendent.assign(parkingLot);
-        Ticket invalidTicket = new Ticket("Lot1", 99, 1);
+        Ticket invalidTicket = new Ticket(99, 1);
         Exception exception = assertThrows(CarNotFoundException.class, () -> attendent.unpark(invalidTicket));
-        assertEquals("Invalid ticket or car not found in the parking lot", exception.getMessage());
+        assertEquals("Parking lot not found for the given ticket", exception.getMessage());
     }
 
     @Test
     void testUnparkedCarShouldMatchWithParkedCar() {
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot1 = new ParkingLot(1, "Lot1");
-        ParkingLot parkingLot2 = new ParkingLot(1, "Lot2");
+        ParkingLot parkingLot1 = new ParkingLot(1);
+        ParkingLot parkingLot2 = new ParkingLot(1);
         attendent.assign(parkingLot1);
         attendent.assign(parkingLot2);
         Car car = new Car("AP-1234", Color.RED);
@@ -78,19 +82,19 @@ class AttendentTest {
     @Test
     void testUnparkCarThatIsNotInAssignedParkingLot() {
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot1 = new ParkingLot(1, "Lot1");
-        ParkingLot parkingLot2 = new ParkingLot(1, "Lot2");
+        ParkingLot parkingLot1 = new ParkingLot(1);
+        ParkingLot parkingLot2 = new ParkingLot(1);
         attendent.assign(parkingLot1);
         attendent.assign(parkingLot2);
-        Ticket invalidTicket = new Ticket("Lot1", 99, 1);
+        Ticket invalidTicket = new Ticket(99, 1);
         Exception exception = assertThrows(CarNotFoundException.class, () -> attendent.unpark(invalidTicket));
-        assertEquals("Invalid ticket or car not found in the parking lot", exception.getMessage());
+        assertEquals("Parking lot not found for the given ticket", exception.getMessage());
     }
 
     @Test
     void testAttendantCannotParkSameCarTwice() {
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(2, "Lot1");
+        ParkingLot parkingLot = new ParkingLot(2);
         attendent.assign(parkingLot);
         Car car = new Car("AP-1234", Color.RED);
         attendent.park(car);

@@ -1,5 +1,9 @@
 package org.example;
 
+import org.example.Exceptions.CarNotFoundException;
+import org.example.Exceptions.ParkingLotAlreadyAssignmentException;
+import org.example.Exceptions.ParkingLotIsFullException;
+
 import java.util.LinkedList;
 
 public class Attendent {
@@ -23,8 +27,9 @@ public class Attendent {
 
     public Car unpark(Ticket ticket) {
         for (ParkingLot lot : parkingLots) {
-            if (lot.getParkingId().equals(ticket.getParkingId())) {
+            try {
                 return lot.unpark(ticket);
+            } catch (CarNotFoundException e) {
             }
         }
         throw new CarNotFoundException("Parking lot not found for the given ticket");

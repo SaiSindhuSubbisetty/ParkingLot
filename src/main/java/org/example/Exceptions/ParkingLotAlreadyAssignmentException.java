@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Exceptions;
 
 public class ParkingLotAlreadyAssignmentException extends RuntimeException {
     public ParkingLotAlreadyAssignmentException(String message) {

@@ -1,24 +1,23 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import org.example.Exceptions.CarNotFoundException;
+import org.example.Exceptions.SlotIsOccupiedException;
 
 class Slot {
-    private List<Car> cars;
-    private int slotNumber;
+    private Car car;
+    private final int slotNumber;
 
     public Slot(int slotNumber) {
         this.slotNumber = slotNumber;
-        this.cars = new ArrayList<>();
+        this.car = null;
     }
 
     public boolean isFree() {
-        return this.cars.isEmpty();
+        return this.car == null;
     }
 
-    public List<Car> getCars() {
-        return cars;
+    public Car getCar() {
+        return car;
     }
 
     public int getSlotNumber() {
@@ -29,15 +28,16 @@ class Slot {
         if (!this.isFree()) {
             throw new SlotIsOccupiedException("Slot is already occupied.");
         }
-        this.cars.add(car);
-        return "Ticket-" + UUID.randomUUID().toString();
+        this.car = car;
+        return null;
     }
 
-    public Car unPark(String ticket) throws CarNotFoundException {
+    public Car unPark() throws CarNotFoundException {
         if (this.isFree()) {
             throw new CarNotFoundException("Car not found in the slot.");
         }
-        Car parkedCar = this.cars.remove(0);
+        Car parkedCar = this.car;
+        this.car = null;
         return parkedCar;
     }
 }
