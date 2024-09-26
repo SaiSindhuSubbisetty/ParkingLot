@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.Enums.Color;
 import org.example.Exceptions.CarAlreadyParkedException;
+import org.example.Exceptions.CarNeedsRegistrationNumberException;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.ParkingLotIsFullException;
 import org.junit.jupiter.api.Test;
@@ -10,24 +11,24 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParkingLotTest {
 
     @Test
-    void testExceptionNewParkingLotIsEmpty() {
+    public void testExceptionNewParkingLotIsEmpty() {
         assertThrows(IllegalArgumentException.class, () -> new ParkingLot(0));
     }
 
     @Test
-    void testExceptionForNegativeParkingSlots() {
+    public void testExceptionForNegativeParkingSlots() {
         assertThrows(IllegalArgumentException.class, () -> new ParkingLot(-1));
     }
 
     @Test
-    void testCreateParkingLotWith5Slots() {
+    public void testCreateParkingLotWith5Slots() {
         ParkingLot parkingLot = new ParkingLot(5);
 
         assertNotNull(parkingLot);
     }
 
     @Test
-    void testCannotParkSameCarTwice() {
+    public void testCannotParkSameCarTwice() {
         ParkingLot parkingLot = new ParkingLot(5);
         Car car = new Car("AP-1234", Color.RED);
 
@@ -38,37 +39,39 @@ class ParkingLotTest {
     }
 
     @Test
-    void testParkingLotWithOneSlotIsFullWhenCarParked() {
+    public void testParkingLotWithOneSlotIsFullWhenCarParked() {
         ParkingLot parkingLot = new ParkingLot(1);
         Car car = new Car("AP-1234", Color.RED);
         Ticket ticket = parkingLot.park(car);
 
         assertNotNull(ticket);
-        assertTrue(parkingLot.isCarParked(car));
+        assertTrue(parkingLot.isCarAlreadyParked(car));
     }
 
     @Test
-    void testParkingLotWithTwoSlotsIsNotFullWhenOneCarParked() {
+    public void testParkingLotWithTwoSlotsIsNotFullWhenOneCarParked() {
         ParkingLot parkingLot = new ParkingLot(2);
         Car car = new Car("AP-1431", Color.BLUE);
         Ticket ticket = parkingLot.park(car);
 
         assertNotNull(ticket);
-        assertTrue(parkingLot.isCarParked(car));
+        assertTrue(parkingLot.isCarAlreadyParked(car));
     }
 
+
+
     @Test
-    void testParkWith5Slots() {
+    public void testParkWith5Slots() {
         Car car = new Car("AP-9876", Color.BLACK);
         ParkingLot parkingLot = new ParkingLot(5);
         Ticket ticket = parkingLot.park(car);
 
         assertNotNull(ticket);
-        assertTrue(parkingLot.isCarParked(car));
+        assertTrue(parkingLot.isCarAlreadyParked(car));
     }
 
     @Test
-    void testParkInFullParkingLot() {
+    public void testParkInFullParkingLot() {
         ParkingLot parkingLot = new ParkingLot(1);
         Car firstCar = new Car("AP-1234", Color.RED);
         Car secondCar = new Car("AP-5678", Color.BLUE);
@@ -80,7 +83,7 @@ class ParkingLotTest {
     }
 
     @Test
-    void testParkInNearestAvailableSlot() {
+    public void testParkInNearestAvailableSlot() {
         Car firstCar = new Car("AP-1234", Color.RED);
         Car secondCar = new Car("AP-9999", Color.BLUE);
         ParkingLot parkingLot = new ParkingLot(5);
@@ -88,12 +91,12 @@ class ParkingLotTest {
         parkingLot.park(firstCar);
         parkingLot.park(secondCar);
 
-        assertTrue(parkingLot.isCarParked(firstCar));
-        assertTrue(parkingLot.isCarParked(secondCar));
+        assertTrue(parkingLot.isCarAlreadyParked(firstCar));
+        assertTrue(parkingLot.isCarAlreadyParked(secondCar));
     }
 
     @Test
-    void testParkInNearestAvailableSlotAfterUnparking() {
+    public void testParkInNearestAvailableSlotAfterUnparking() {
         ParkingLot parkingLot = new ParkingLot(5);
         Car firstCar = new Car("AP-1234", Color.RED);
         Car secondCar = new Car("AP-5678", Color.BLUE);
@@ -104,31 +107,31 @@ class ParkingLotTest {
         parkingLot.unpark(firstCarTicket);
         parkingLot.park(thirdCar);
 
-        assertTrue(parkingLot.isCarParked(thirdCar));
+        assertTrue(parkingLot.isCarAlreadyParked(thirdCar));
     }
 
     @Test
-    void testUnparkCarThatIsNotParked() {
+    public void testUnparkCarThatIsNotParked() {
         ParkingLot parkingLot = new ParkingLot(5);
         Ticket invalidTicket = new Ticket();  // Ticket for an empty slot
 
         Exception exception = assertThrows(CarNotFoundException.class, () -> parkingLot.unpark(invalidTicket));
 
-        assertEquals("Invalid ticket or car not found in the parking lot", exception.getMessage());
+        assertEquals("car not found in the parking lot", exception.getMessage());
     }
 
     @Test
-    void testUnparkCarFromEmptyParkingLot() {
+    public void testUnparkCarFromEmptyParkingLot() {
         ParkingLot parkingLot = new ParkingLot(5);
         Ticket invalidTicket = new Ticket();  // Empty parking lot
 
         Exception exception = assertThrows(CarNotFoundException.class, () -> parkingLot.unpark(invalidTicket));
 
-        assertEquals("Invalid ticket or car not found in the parking lot", exception.getMessage());
+        assertEquals("car not found in the parking lot", exception.getMessage());
     }
 
     @Test
-    void testUnpark() {
+    public void testUnpark() {
         Car car = new Car("AP-1234", Color.RED);
         ParkingLot parkingLot = new ParkingLot(5);
         Ticket ticket = parkingLot.park(car);
@@ -138,7 +141,7 @@ class ParkingLotTest {
     }
 
     @Test
-    void testCountCarsByRedColorIsNotFoundInParkingLot() {
+    public void testCountCarsByRedColorIsNotFoundInParkingLot() {
         ParkingLot parkingLot = new ParkingLot(1);
         int count = parkingLot.countCarsByColor(Color.RED);
 
@@ -146,7 +149,7 @@ class ParkingLotTest {
     }
 
     @Test
-    void testCountCarsByColorNotPresent() {
+    public void testCountCarsByColorNotPresent() {
         ParkingLot parkingLot = new ParkingLot(1);
         Car car = new Car("AP-1234", Color.BLUE);
 
@@ -155,7 +158,7 @@ class ParkingLotTest {
     }
 
     @Test
-    void testCountCarsByColor() {
+    public void testCountCarsByColor() {
         Car firstCar = new Car("AP-1234", Color.RED);
         Car secondCar = new Car("AP-9999", Color.RED);
         Car thirdCar = new Car("AP-0001", Color.BLUE);
@@ -169,15 +172,15 @@ class ParkingLotTest {
     }
 
     @Test
-    void testIsCarParkedForNonParkedCar() {
+    public void testisCarAlreadyParkedForNonParkedCar() {
         ParkingLot parkingLot = new ParkingLot(5);
         Car car = new Car("AP-1432", Color.YELLOW);
 
-        assertFalse(parkingLot.isCarParked(car));  // Car is not parked
+        assertFalse(parkingLot.isCarAlreadyParked(car));  // Car is not parked
     }
 
     @Test
-    void testIsParkingLotFull() {
+    public void testIsParkingLotFull() {
         ParkingLot parkingLot = new ParkingLot(1);
         Car car = new Car("AP-4321", Color.BLUE);
 
@@ -186,11 +189,33 @@ class ParkingLotTest {
     }
 
     @Test
-    void testIsParkingLotNotFull() {
+    public void testIsParkingLotNotFull() {
         ParkingLot parkingLot = new ParkingLot(5);
         Car car = new Car("AP-9876", Color.GREEN);
 
         parkingLot.park(car);
         assertFalse(parkingLot.isFull());  // Parking lot is not full
+    }
+
+    @Test
+    public void testIsCarWithRegistrationNumberParked() throws CarNeedsRegistrationNumberException {
+        ParkingLot parkingLot = new ParkingLot(5);
+        Car car = new Car("AP-1234", Color.RED);
+
+        parkingLot.park(car);
+
+        assertTrue(parkingLot.isCarWithRegistrationNumberParked("AP-1234"));
+    }
+
+    @Test
+    public void testIsCarWithoutRegistrationNumberCannotParked() throws CarNeedsRegistrationNumberException {
+        ParkingLot parkingLot = new ParkingLot(5);
+        Car car = new Car(null, Color.RED);  // Car without a registration number
+
+        Exception exception = assertThrows(CarNeedsRegistrationNumberException.class, () -> {
+            parkingLot.isCarWithRegistrationNumberParked(null);
+        });
+
+        assertEquals("Car needs registration number.", exception.getMessage());
     }
 }

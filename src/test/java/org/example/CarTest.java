@@ -7,16 +7,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class CarTest {
 
     @Test
-    void testCarCreation() {
+    public void testCarCreation() {
         Car car = new Car("AP-1234", Color.RED);
 
         assertNotNull(car, "Car object should not be null");
-        assertEquals("AP-1234", car.registrationNumber, "Registration number should match");
-        assertEquals(Color.RED, car.color);
+        assertTrue(car.hasRegistrationNumber("AP-1234"), "Registration number should match");
+        assertTrue(car.isColor(Color.RED), "Color should match");
     }
 
     @Test
-    void testCarEquality() {
+    public void testCarEquality() {
         Car firstCar = new Car("AP-1234", Color.RED);
         Car secondCar = new Car("AP-1234", Color.RED);
         Car thirdCar = new Car("AP-5678", Color.BLUE);
@@ -26,7 +26,7 @@ class CarTest {
     }
 
     @Test
-    void testCarHashCode() {
+    public void testCarHashCode() {
         Car firstCar = new Car("AP-1234", Color.RED);
         Car secondCar = new Car("AP-1234", Color.RED);
 
@@ -34,7 +34,23 @@ class CarTest {
     }
 
     @Test
-    void testCarInequalityWithDifferentObject() {
+    public void testCarInequalityWithDifferentRegistrationNumber() {
+        Car car = new Car("AP-1234", Color.RED);
+        Car anotherCar = new Car("AP-5678", Color.RED);
+
+        assertNotEquals(car, anotherCar);
+    }
+
+    @Test
+    public void testCarInequalityWithDifferentColor() {
+        Car car = new Car("AP-1234", Color.RED);
+        Car anotherCar = new Car("AP-1234", Color.BLUE);
+
+        assertNotEquals(car, anotherCar);
+    }
+
+    @Test
+    public void testCarInequalityWithDifferentObject() {
         Car car = new Car("AP-1234", Color.RED);
         String notACar = "Not a car";
 
@@ -42,9 +58,23 @@ class CarTest {
     }
 
     @Test
-    void testCarInequalityWithNull() {
+    public void testCarInequalityWithNull() {
         Car car = new Car("AP-1234", Color.RED);
 
         assertNotEquals(car, null);
+    }
+
+    @Test
+    public void testCarWithColorYellow() {
+        Car car = new Car("AP-1432", Color.YELLOW);
+
+        assertTrue(car.isColor(Color.YELLOW));
+    }
+
+    @Test
+    public void testCarWithInorrectColorYellow() {
+        Car car = new Car("AP-1432", Color.YELLOW);
+
+        assertFalse(car.isColor(Color.BLUE));
     }
 }

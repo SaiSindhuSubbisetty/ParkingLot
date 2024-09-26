@@ -1,9 +1,7 @@
 package org.example;
 
 import org.example.Enums.Color;
-import org.example.Exceptions.CarAlreadyParkedException;
-import org.example.Exceptions.CarNotFoundException;
-import org.example.Exceptions.ParkingLotIsFullException;
+import org.example.Exceptions.*;
 
 
 import java.util.ArrayList;
@@ -13,7 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ParkingLot {
     private final int totalSlots;
     private final List<Slot> slots;
-    private final AtomicInteger ticketCounter = new AtomicInteger(0);
 
     public ParkingLot(int totalSlots) {
         if (totalSlots <= 0) {
@@ -39,7 +36,7 @@ public class ParkingLot {
         if(isFull()){
             throw new ParkingLotIsFullException("Parking lot is full");
         }
-        if (isCarParked(car)) {
+        if (isCarAlreadyParked(car)) {
             throw new CarAlreadyParkedException("Car is already parked");
         }
         Slot nearestSlot = findNearestSlot();
@@ -47,7 +44,7 @@ public class ParkingLot {
         return ticket;
     }
 
-    public Car unpark(Ticket ticket) {
+    public Car unpark(Ticket ticket) throws InvalidTicketException {
         for (Slot slot : slots) {
             try {
                 return slot.unPark(ticket);
@@ -55,12 +52,12 @@ public class ParkingLot {
                 // Continue searching in other slots
             }
         }
-        throw new CarNotFoundException("Invalid ticket or car not found in the parking lot");
+        throw new CarNotFoundException("car not found in the parking lot");
     }
 
-    public boolean isCarParked(Car car) {
+    public boolean isCarAlreadyParked(Car car) {
         for (Slot slot : slots) {
-            if (slot.car != null && slot.car.equals(car)) {
+            if (slot.checkingCarInParkingSlot(car)) {
                 return true;
             }
         }
@@ -70,6 +67,7 @@ public class ParkingLot {
     public boolean isFull() {
         for (Slot slot : slots) {
             if (slot.isFree()) {
+                findNearestSlot();
                 return false;
             }
         }
@@ -77,14 +75,14 @@ public class ParkingLot {
     }
 
     public int countCarsByColor(Color color) {
-        int count = 0;
-        for (Slot slot : slots) {
-            Car car = slot.car;
-            if (car != null && car.color == color) {
-                count++;
-            }
-        }
-        return count;
+        return (int) slots.stream()
+                .filter(slot -> slot.hasCarOfColor(color))
+                .count();
+    }
+
+    public boolean isCarWithRegistrationNumberParked(String registrationNumber) throws CarNeedsRegistrationNumberException{
+        return slots.stream()
+                .anyMatch(slot -> slot.hasCarWithRegistrationNumber(registrationNumber));
     }
 
 

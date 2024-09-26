@@ -1,38 +1,46 @@
 package org.example;
 
+import org.example.Exceptions.CarAlreadyParkedException;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.ParkingLotAlreadyAssignmentException;
 import org.example.Exceptions.ParkingLotIsFullException;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class Attendent {
-    private final LinkedList<ParkingLot> parkingLots = new LinkedList<>();
+    private final ArrayList<ParkingLot> assignedparkingLots = new ArrayList<>();
+    private ArrayList<Car> parkedCars = new ArrayList<>();
 
     public void assign(ParkingLot parkingLot) {
-        if (parkingLots.contains(parkingLot)) {
+        if (assignedparkingLots.contains(parkingLot)) {
             throw new ParkingLotAlreadyAssignmentException("Parking lot already assigned.");
         }
-        parkingLots.add(parkingLot);
+        assignedparkingLots.add(parkingLot);
     }
 
     public Ticket park(Car car) {
-        for (ParkingLot lot : parkingLots) {
+        if (parkedCars.contains(car)) {
+            throw new CarAlreadyParkedException("Car already assigned to this parking lot");
+        }
+        for (ParkingLot lot : assignedparkingLots) {
             if (!lot.isFull()) {
+                parkedCars.add(car);
                 return lot.park(car);
             }
         }
         throw new ParkingLotIsFullException("All parking lots are full");
     }
 
-    public Car unpark(Ticket ticket) {
-        for (ParkingLot lot : parkingLots) {
+    public Car unpark(Ticket ticket){
+        for (ParkingLot lot : assignedparkingLots) {
             try {
-                return lot.unpark(ticket);
+                Car unparkedCar = lot.unpark(ticket);
+                parkedCars.remove(unparkedCar);
+                return unparkedCar;
             } catch (CarNotFoundException e) {
                 // Continue searching in other parking lots
             }
         }
-        throw new CarNotFoundException("Parking lot not found for the given ticket");
+        throw new CarNotFoundException("Car not found in assigned parking lot");
     }
 }
