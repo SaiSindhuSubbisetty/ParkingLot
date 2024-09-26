@@ -4,9 +4,6 @@ import org.example.Enums.Color;
 import org.example.Exceptions.CarAlreadyParkedException;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.ParkingLotIsFullException;
-import org.example.Implementations.Car;
-import org.example.Implementations.ParkingLot;
-import org.example.Implementations.Ticket;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -113,7 +110,7 @@ class ParkingLotTest {
     @Test
     void testUnparkCarThatIsNotParked() {
         ParkingLot parkingLot = new ParkingLot(5);
-        Ticket invalidTicket = new Ticket(0, 1);  // Ticket for an empty slot
+        Ticket invalidTicket = new Ticket();  // Ticket for an empty slot
 
         Exception exception = assertThrows(CarNotFoundException.class, () -> parkingLot.unpark(invalidTicket));
 
@@ -123,7 +120,7 @@ class ParkingLotTest {
     @Test
     void testUnparkCarFromEmptyParkingLot() {
         ParkingLot parkingLot = new ParkingLot(5);
-        Ticket invalidTicket = new Ticket(0, 1);  // Empty parking lot
+        Ticket invalidTicket = new Ticket();  // Empty parking lot
 
         Exception exception = assertThrows(CarNotFoundException.class, () -> parkingLot.unpark(invalidTicket));
 

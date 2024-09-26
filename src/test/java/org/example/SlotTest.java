@@ -3,8 +3,6 @@ package org.example;
 import org.example.Enums.Color;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.SlotIsOccupiedException;
-import org.example.Implementations.Car;
-import org.example.Implementations.Slot;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,13 +10,13 @@ class SlotTest {
 
     @Test
     void testSlotIsInitiallyFree() {
-        Slot slot = new Slot(1);
+        Slot slot = new Slot();
         assertTrue(slot.isFree());
     }
 
     @Test
     void testParkCarInFreeSlot() throws SlotIsOccupiedException {
-        Slot slot = new Slot(1);
+        Slot slot = new Slot();
         Car car = new Car("AP-1234", Color.RED);
 
         slot.park(car);
@@ -28,8 +26,8 @@ class SlotTest {
     }
 
     @Test
-    void testCannotParkCarInOccupiedSlot(){
-        Slot slot = new Slot(1);
+    void testCannotParkCarInOccupiedSlot() {
+        Slot slot = new Slot();
         Car car = new Car("AP-1234", Color.RED);
 
         slot.park(car);
@@ -41,27 +39,20 @@ class SlotTest {
 
     @Test
     void testUnparkCarFromOccupiedSlot() throws SlotIsOccupiedException, CarNotFoundException {
-        Slot slot = new Slot(1);
+        Slot slot = new Slot();
         Car car = new Car("AP-1234", Color.RED);
 
-        slot.park(car);
-        Car unparkedCar = slot.unPark();
+        Ticket ticket = slot.park(car);  // Get the ticket from the park method
+        Car unparkedCar = slot.unPark(ticket);  // Use the same ticket to unpark
 
         assertEquals(car, unparkedCar);
-        assertEquals(true, slot.isFree());
+        assertTrue(slot.isFree());
     }
 
     @Test
     void testCannotUnparkCarFromFreeSlot() {
-        Slot slot = new Slot(1);
+        Slot slot = new Slot();
 
-        assertThrows(CarNotFoundException.class, () -> slot.unPark());
-    }
-
-    @Test
-    void testGetSlotNumber() {
-        Slot slot = new Slot(7);
-
-        assertEquals(7, slot.slotNumber);
+        assertThrows(CarNotFoundException.class, () -> slot.unPark(new Ticket()));
     }
 }

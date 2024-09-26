@@ -1,8 +1,9 @@
-package org.example.Implementations;
+package org.example;
 
 import org.example.Enums.Color;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class Car {
     public final String registrationNumber;

@@ -4,10 +4,6 @@ import org.example.Enums.Color;
 import org.example.Exceptions.CarAlreadyParkedException;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.ParkingLotAlreadyAssignmentException;
-import org.example.Implementations.Attendent;
-import org.example.Implementations.Car;
-import org.example.Implementations.ParkingLot;
-import org.example.Implementations.Ticket;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,7 +71,7 @@ class AttendentTest {
         ParkingLot parkingLot = new ParkingLot(2);
         attendent.assign(parkingLot);
 
-        Ticket invalidTicket = new Ticket(99, 1);
+        Ticket invalidTicket = new Ticket();
 
         Exception exception = assertThrows(CarNotFoundException.class, () -> attendent.unpark(invalidTicket));
         assertEquals("Parking lot not found for the given ticket", exception.getMessage());
@@ -105,7 +101,7 @@ class AttendentTest {
         attendent.assign(parkingLot1);
         attendent.assign(parkingLot2);
 
-        Ticket invalidTicket = new Ticket(99, 1);
+        Ticket invalidTicket = new Ticket();
 
         Exception exception = assertThrows(CarNotFoundException.class, () -> attendent.unpark(invalidTicket));
         assertEquals("Parking lot not found for the given ticket", exception.getMessage());

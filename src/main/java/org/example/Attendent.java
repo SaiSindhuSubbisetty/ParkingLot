@@ -1,4 +1,4 @@
-package org.example.Implementations;
+package org.example;
 
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.ParkingLotAlreadyAssignmentException;
@@ -30,6 +30,7 @@ public class Attendent {
             try {
                 return lot.unpark(ticket);
             } catch (CarNotFoundException e) {
+                // Continue searching in other parking lots
             }
         }
         throw new CarNotFoundException("Parking lot not found for the given ticket");

@@ -1,4 +1,4 @@
-package org.example.Implementations;
+package org.example;
 
 import org.example.Enums.Color;
 import org.example.Exceptions.CarAlreadyParkedException;
@@ -22,7 +22,7 @@ public class ParkingLot {
         this.totalSlots = totalSlots;
         this.slots = new ArrayList<>(totalSlots);
         for (int i = 0; i < totalSlots; i++) {
-            slots.add(new Slot(i));
+            slots.add(new Slot());
         }
     }
 
@@ -36,20 +36,23 @@ public class ParkingLot {
     }
 
     public Ticket park(Car car) {
+        if(isFull()){
+            throw new ParkingLotIsFullException("Parking lot is full");
+        }
         if (isCarParked(car)) {
             throw new CarAlreadyParkedException("Car is already parked");
         }
         Slot nearestSlot = findNearestSlot();
-        nearestSlot.park(car);
-        return new Ticket(nearestSlot.slotNumber, ticketCounter.incrementAndGet());
+        Ticket ticket = nearestSlot.park(car);
+        return ticket;
     }
 
     public Car unpark(Ticket ticket) {
-        int slotNumber = ticket.slotNumber;
-        if (slotNumber >= 0 && slotNumber < totalSlots) {
-            Slot slot = slots.get(slotNumber);
-            if (!slot.isFree()) {
-                return slot.unPark();
+        for (Slot slot : slots) {
+            try {
+                return slot.unPark(ticket);
+            } catch (CarNotFoundException e) {
+                // Continue searching in other slots
             }
         }
         throw new CarNotFoundException("Invalid ticket or car not found in the parking lot");
