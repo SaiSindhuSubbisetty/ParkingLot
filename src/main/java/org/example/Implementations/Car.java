@@ -1,10 +1,12 @@
-package org.example;
+package org.example.Implementations;
+
+import org.example.Enums.Color;
 
 import java.util.Objects;
 
 public class Car {
-    final String registrationNumber;
-    final Color color;
+    public final String registrationNumber;
+    public final Color color;
 
     public Car(String registrationNumber, Color color) {
         this.registrationNumber = registrationNumber;
@@ -23,5 +25,4 @@ public class Car {
     public int hashCode() {
         return Objects.hash(registrationNumber);
     }
-
 }

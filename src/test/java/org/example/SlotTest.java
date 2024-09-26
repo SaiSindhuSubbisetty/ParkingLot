@@ -1,7 +1,10 @@
 package org.example;
 
+import org.example.Enums.Color;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.SlotIsOccupiedException;
+import org.example.Implementations.Car;
+import org.example.Implementations.Slot;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

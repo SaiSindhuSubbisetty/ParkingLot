@@ -1,8 +1,13 @@
 package org.example;
 
+import org.example.Enums.Color;
 import org.example.Exceptions.CarAlreadyParkedException;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.ParkingLotAlreadyAssignmentException;
+import org.example.Implementations.Attendent;
+import org.example.Implementations.Car;
+import org.example.Implementations.ParkingLot;
+import org.example.Implementations.Ticket;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,6 +17,7 @@ class AttendentTest {
     void testAssignParkingLotToAttendent() {
         Attendent attendent = new Attendent();
         ParkingLot parkingLot = new ParkingLot(1);
+
         assertDoesNotThrow(() -> attendent.assign(parkingLot));
     }
 
@@ -21,6 +27,7 @@ class AttendentTest {
         ParkingLot secondParkingLot = new ParkingLot(1);
         Attendent attendent = new Attendent();
         attendent.assign(firstParkingLot);
+
         assertDoesNotThrow(() -> attendent.assign(secondParkingLot));
     }
 
@@ -38,8 +45,11 @@ class AttendentTest {
         Attendent attendent = new Attendent();
         ParkingLot parkingLot = new ParkingLot(2);
         attendent.assign(parkingLot);
+
         Car car = new Car("AP-1234", Color.RED);
+
         Ticket ticket = attendent.park(car);
+
         assertNotNull(ticket, "Attendant should return a valid parking ticket");
         assertTrue(parkingLot.isCarParked(car), "Car should be parked in the parking lot");
     }
@@ -49,9 +59,12 @@ class AttendentTest {
         Attendent attendent = new Attendent();
         ParkingLot parkingLot = new ParkingLot(2);
         attendent.assign(parkingLot);
+
         Car car = new Car("AP-1234", Color.RED);
+
         Ticket ticket = attendent.park(car);
         Car unparkedCar = attendent.unpark(ticket);
+
         assertEquals(car, unparkedCar, "The car returned should be the same as the one that was parked");
         assertFalse(parkingLot.isCarParked(car), "The car should no longer be parked in the parking lot");
     }
@@ -61,7 +74,9 @@ class AttendentTest {
         Attendent attendent = new Attendent();
         ParkingLot parkingLot = new ParkingLot(2);
         attendent.assign(parkingLot);
+
         Ticket invalidTicket = new Ticket(99, 1);
+
         Exception exception = assertThrows(CarNotFoundException.class, () -> attendent.unpark(invalidTicket));
         assertEquals("Parking lot not found for the given ticket", exception.getMessage());
     }
@@ -73,9 +88,12 @@ class AttendentTest {
         ParkingLot parkingLot2 = new ParkingLot(1);
         attendent.assign(parkingLot1);
         attendent.assign(parkingLot2);
+
         Car car = new Car("AP-1234", Color.RED);
+
         Ticket ticket = attendent.park(car);  // parks in the first lot
         Car unparkedCar = attendent.unpark(ticket);
+
         assertEquals(car, unparkedCar, "Unparked car should match the parked car");
     }
 
@@ -86,7 +104,9 @@ class AttendentTest {
         ParkingLot parkingLot2 = new ParkingLot(1);
         attendent.assign(parkingLot1);
         attendent.assign(parkingLot2);
+
         Ticket invalidTicket = new Ticket(99, 1);
+
         Exception exception = assertThrows(CarNotFoundException.class, () -> attendent.unpark(invalidTicket));
         assertEquals("Parking lot not found for the given ticket", exception.getMessage());
     }
@@ -96,8 +116,11 @@ class AttendentTest {
         Attendent attendent = new Attendent();
         ParkingLot parkingLot = new ParkingLot(2);
         attendent.assign(parkingLot);
+
         Car car = new Car("AP-1234", Color.RED);
+
         attendent.park(car);
+
         Exception exception = assertThrows(CarAlreadyParkedException.class, () -> attendent.park(car));
         assertEquals("Car is already parked", exception.getMessage());
     }

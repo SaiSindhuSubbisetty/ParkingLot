@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.Enums.Color;
+import org.example.Implementations.Car;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,6 +10,7 @@ class CarTest {
     @Test
     void testCarCreation() {
         Car car = new Car("AP-1234", Color.RED);
+
         assertNotNull(car, "Car object should not be null");
         assertEquals("AP-1234", car.registrationNumber, "Registration number should match");
         assertEquals(Color.RED, car.color);
@@ -15,30 +18,34 @@ class CarTest {
 
     @Test
     void testCarEquality() {
-        Car firstcar = new Car("AP-1234", Color.RED);
-        Car secondcar = new Car("AP-1234", Color.RED);
-        Car thirdcar = new Car("AP-5678", Color.BLUE);
-        assertEquals(firstcar, secondcar);
-        assertNotEquals(firstcar, thirdcar);
+        Car firstCar = new Car("AP-1234", Color.RED);
+        Car secondCar = new Car("AP-1234", Color.RED);
+        Car thirdCar = new Car("AP-5678", Color.BLUE);
+
+        assertEquals(firstCar, secondCar);
+        assertNotEquals(firstCar, thirdCar);
     }
 
     @Test
     void testCarHashCode() {
-        Car firstcar = new Car("AP-1234", Color.RED);
-        Car secondcar = new Car("AP-1234", Color.RED);
-        assertEquals(firstcar.hashCode(), secondcar.hashCode());
+        Car firstCar = new Car("AP-1234", Color.RED);
+        Car secondCar = new Car("AP-1234", Color.RED);
+
+        assertEquals(firstCar.hashCode(), secondCar.hashCode());
     }
 
     @Test
     void testCarInequalityWithDifferentObject() {
         Car car = new Car("AP-1234", Color.RED);
         String notACar = "Not a car";
+
         assertNotEquals(car, notACar);
     }
 
     @Test
     void testCarInequalityWithNull() {
         Car car = new Car("AP-1234", Color.RED);
+
         assertNotEquals(car, null);
     }
 }

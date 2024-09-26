@@ -1,6 +1,5 @@
-package org.example;
+package org.example.Implementations;
 
-import org.example.Exceptions.CarAlreadyParkedException;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.ParkingLotAlreadyAssignmentException;
 import org.example.Exceptions.ParkingLotIsFullException;

@@ -1,11 +1,11 @@
-package org.example;
+package org.example.Implementations;
 
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.SlotIsOccupiedException;
 
-class Slot {
-    Car car;
-    final int slotNumber;
+public class Slot {
+    public Car car;
+    public final int slotNumber;
 
     public Slot(int slotNumber) {
         this.slotNumber = slotNumber;
@@ -31,4 +31,5 @@ class Slot {
         this.car = null;
         return parkedCar;
     }
+
 }

@@ -1,8 +1,10 @@
-package org.example;
+package org.example.Implementations;
 
+import org.example.Enums.Color;
 import org.example.Exceptions.CarAlreadyParkedException;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.ParkingLotIsFullException;
+
 
 import java.util.ArrayList;
 import java.util.List;
