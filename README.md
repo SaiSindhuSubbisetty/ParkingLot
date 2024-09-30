@@ -27,6 +27,7 @@ Story 2:
 5 As an attendant of more than 1 parking lot I should be able to sequentially park and unpark across the lots bases on nearest free slot strategy
 
 Story 3:
+
 1 As a parking lot owner I should be able to assign more than 1 parking lot to an attendant
 
 2 As a parking lot owner I should be able to assign more than 1 assistant to a parking lot
