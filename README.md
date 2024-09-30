@@ -25,3 +25,18 @@ Story 2:
 4 As a parking lot owner I should be able to assign more than 1 parking lot to my attendant
 
 5 As an attendant of more than 1 parking lot I should be able to sequentially park and unpark across the lots bases on nearest free slot strategy
+
+Story 3:
+1 As a parking lot owner I should be able to assign more than 1 parking lot to an attendant
+
+2 As a parking lot owner I should be able to assign more than 1 assistant to a parking lot
+
+3 As a parking lot owner I should also be able to assist with parking just like any other attendant and I should be able to allocate to myself which parking lots I attend to
+
+4 As a parking lot attendant I should be park cars in the next available slot
+
+5 As a smart parking lot attendant I should be able to park cars such that they are even distributed across my parking lots
+
+6 As a parking lot owner I need to be informed every time a parking lot is full or becomes available
+
+7 As a policeman I need to be informed everytime a parking lot is full or becomes available
