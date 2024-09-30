@@ -78,10 +78,10 @@ class AttendentTest {
     @Test
     public void testUnparkedCarShouldMatchWithParkedCar() {
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot1 = new ParkingLot(1);
-        ParkingLot parkingLot2 = new ParkingLot(1);
-        attendent.assign(parkingLot1);
-        attendent.assign(parkingLot2);
+        ParkingLot firstparkingLot = new ParkingLot(1);
+        ParkingLot secondparkingLot = new ParkingLot(1);
+        attendent.assign(firstparkingLot);
+        attendent.assign(secondparkingLot);
 
         Car car = new Car("AP-1234", Color.RED);
 
@@ -94,10 +94,10 @@ class AttendentTest {
     @Test
     public void testUnparkCarThatIsNotInAssignedParkingLot() {
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot1 = new ParkingLot(1);
-        ParkingLot parkingLot2 = new ParkingLot(1);
-        attendent.assign(parkingLot1);
-        attendent.assign(parkingLot2);
+        ParkingLot firstparkingLot = new ParkingLot(1);
+        ParkingLot secondparkingLot = new ParkingLot(1);
+        attendent.assign(firstparkingLot);
+        attendent.assign(secondparkingLot);
 
         Ticket invalidTicket = new Ticket();
 
@@ -122,10 +122,10 @@ class AttendentTest {
     @Test
     public void testParkingSameInDifferentSlots() throws Exception {
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot1 = new ParkingLot(1);
-        ParkingLot parkingLot2 = new ParkingLot(1);
-        attendent.assign(parkingLot1);
-        attendent.assign(parkingLot2);
+        ParkingLot firstparkingLot = new ParkingLot(1);
+        ParkingLot secondparkingLot = new ParkingLot(1);
+        attendent.assign(firstparkingLot);
+        attendent.assign(secondparkingLot);
 
         Car car = new Car("AP-1234", Color.RED);
 
@@ -137,10 +137,10 @@ class AttendentTest {
     @Test
     public void testUnParkCarInDifferentSlot() throws Exception {
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot1 = new ParkingLot(1);
-        ParkingLot parkingLot2 = new ParkingLot(1);
-        attendent.assign(parkingLot1);
-        attendent.assign(parkingLot2);
+        ParkingLot firstparkingLot = new ParkingLot(1);
+        ParkingLot secondparkingLot = new ParkingLot(1);
+        attendent.assign(firstparkingLot);
+        attendent.assign(secondparkingLot);
 
         Car car = new Car("AP-1234", Color.RED);
 
@@ -148,8 +148,8 @@ class AttendentTest {
         Car unparkedCar = attendent.unpark(ticket);
 
         assertEquals(car, unparkedCar, "The car returned should be the same as the one that was parked");
-        assertFalse(parkingLot1.isCarAlreadyParked(car), "The car should no longer be parked in the first parking lot");
-        assertFalse(parkingLot2.isCarAlreadyParked(car), "The car should no longer be parked in the second parking lot");
+        assertFalse(firstparkingLot.isCarAlreadyParked(car), "The car should no longer be parked in the first parking lot");
+        assertFalse(secondparkingLot.isCarAlreadyParked(car), "The car should no longer be parked in the second parking lot");
     }
 
     @Test
@@ -165,6 +165,68 @@ class AttendentTest {
 
         Exception exception = assertThrows(CarNotFoundException.class, () -> attendent.unpark(ticket));
         assertEquals("Car not found in assigned parking lot", exception.getMessage());
+    }
+
+    @Test
+    public void testAssignMultipleParkingLots() {
+        Attendent attendent = new Attendent();
+        ParkingLot firstparkingLot = new ParkingLot(2);
+        ParkingLot secondparkingLot = new ParkingLot(3);
+
+        attendent.assign(firstparkingLot);
+        attendent.assign(secondparkingLot);
+
+        assertDoesNotThrow(() -> attendent.assign(new ParkingLot(5)));
+    }
+
+    @Test
+    public void testParkCarInNextAvailableSlot() {
+        Attendent attendent = new Attendent();
+        ParkingLot parkingLot = new ParkingLot(2);
+        attendent.assign(parkingLot);
+
+        Car firstcar = new Car("AP-1234", Color.RED);
+        Car secondcar = new Car("AP-5678", Color.BLUE);
+
+        Ticket ticket1 = attendent.park(firstcar);
+        Ticket ticket2 = attendent.park(secondcar);
+
+        assertNotNull(ticket1);
+        assertNotNull(ticket2);
+    }
+
+    @Test
+    public void testSmartParkingEvenDistribution() {
+        Attendent attendent = new Attendent();
+        ParkingLot firstparkingLot = new ParkingLot(2);
+        ParkingLot secondparkingLot = new ParkingLot(2);
+        attendent.assign(firstparkingLot);
+        attendent.assign(secondparkingLot);
+
+        Car firstCar = new Car("AP-1234", Color.RED);
+        Car secondCar = new Car("AP-5678", Color.BLUE);
+        Car thirdCar = new Car("AP-9101", Color.GREEN);
+
+        attendent.park(firstCar);
+        attendent.park(secondCar);
+        attendent.park(thirdCar);
+
+        assertEquals(2, firstparkingLot.countParkedCars());
+        assertEquals(1, secondparkingLot.countParkedCars());
+
+    }
+
+    @Test
+    public void testAssigningSameParkingLotToDifferentAttendent() throws Exception {
+        ParkingLot ParkingLot = new ParkingLot(5);
+        Attendent firstAttendant = new Attendent();
+        Attendent secondAttendant = new Attendent();
+
+        firstAttendant.assign(ParkingLot);
+        assertDoesNotThrow(() -> {
+            secondAttendant.assign(ParkingLot);
+        });
+
     }
 
 }

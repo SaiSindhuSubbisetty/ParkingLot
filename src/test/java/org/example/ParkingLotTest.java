@@ -59,7 +59,6 @@ class ParkingLotTest {
     }
 
 
-
     @Test
     public void testParkWith5Slots() {
         Car car = new Car("AP-9876", Color.BLACK);
@@ -117,7 +116,7 @@ class ParkingLotTest {
 
         Exception exception = assertThrows(CarNotFoundException.class, () -> parkingLot.unpark(invalidTicket));
 
-        assertEquals("car not found in the parking lot", exception.getMessage());
+        assertEquals("Car not found in the parking lot", exception.getMessage());
     }
 
     @Test
@@ -127,7 +126,7 @@ class ParkingLotTest {
 
         Exception exception = assertThrows(CarNotFoundException.class, () -> parkingLot.unpark(invalidTicket));
 
-        assertEquals("car not found in the parking lot", exception.getMessage());
+        assertEquals("Car not found in the parking lot", exception.getMessage());
     }
 
     @Test
@@ -139,6 +138,7 @@ class ParkingLotTest {
 
         assertEquals(car, unparkedCar);  // Ensure the correct car is returned
     }
+
 
     @Test
     public void testCountCarsByRedColorIsNotFoundInParkingLot() {
@@ -217,5 +217,57 @@ class ParkingLotTest {
         });
 
         assertEquals("Car needs registration number.", exception.getMessage());
+    }
+
+    @Test
+    public void testAssignMultipleAssistantsToParkingLot() {
+        ParkingLot parkingLot = new ParkingLot(2);
+        Attendent attendent1 = new Attendent();
+        Attendent attendent2 = new Attendent();
+
+        parkingLot.addAssistant(attendent1);
+        parkingLot.addAssistant(attendent2);
+
+        assertDoesNotThrow(() -> parkingLot.addAssistant(new Attendent()));
+    }
+
+    @Test
+    public void testParkCarInNextAvailableSlot() {
+        ParkingLot parkingLot = new ParkingLot(2);
+
+        Car car1 = new Car("AP-1234", Color.RED);
+        Car car2 = new Car("AP-5678", Color.BLUE);
+
+        Ticket ticket1 = parkingLot.park(car1);
+        Ticket ticket2 = parkingLot.park(car2);
+
+        assertNotNull(ticket1);
+        assertNotNull(ticket2);
+    }
+
+
+    @Test
+    public void testPolicemanNotifiedWhenParkingLotFull() {
+        ParkingLot parkingLot = new ParkingLot(1);
+        Policeman policeman = new Policeman();
+        parkingLot.addPoliceman(policeman);
+
+        Car car = new Car("AP-1234", Color.RED);
+        parkingLot.park(car);
+
+        assertThrows(ParkingLotIsFullException.class, () -> parkingLot.park(new Car("AP-5678", Color.BLUE)));
+    }
+
+    @Test
+    public void testPolicemanNotifiedWhenParkingLotAvailable() {
+        ParkingLot parkingLot = new ParkingLot(1);
+        Policeman policeman = new Policeman();
+        parkingLot.addPoliceman(policeman);
+
+        Car car = new Car("AP-1234", Color.RED);
+        Ticket ticket = parkingLot.park(car);
+        parkingLot.unpark(ticket);
+
+        assertDoesNotThrow(() -> parkingLot.park(new Car("AP-5678", Color.BLUE)));
     }
 }
