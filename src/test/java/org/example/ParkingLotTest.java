@@ -235,11 +235,11 @@ class ParkingLotTest {
     public void testParkCarInNextAvailableSlot() {
         ParkingLot parkingLot = new ParkingLot(2);
 
-        Car car1 = new Car("AP-1234", Color.RED);
-        Car car2 = new Car("AP-5678", Color.BLUE);
+        Car firstCar = new Car("AP-1234", Color.RED);
+        Car secondCar = new Car("AP-5678", Color.BLUE);
 
-        Ticket ticket1 = parkingLot.park(car1);
-        Ticket ticket2 = parkingLot.park(car2);
+        Ticket ticket1 = parkingLot.park(firstCar);
+        Ticket ticket2 = parkingLot.park(secondCar);
 
         assertNotNull(ticket1);
         assertNotNull(ticket2);

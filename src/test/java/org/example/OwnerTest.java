@@ -28,7 +28,6 @@ class OwnerTest {
         owner.addOwnedParkingLot(parkingLot);
 
         Car car = new Car("AP-1234", Color.RED);
-
         owner.park(car);
 
         assertThrows(ParkingLotIsFullException.class, () -> owner.park(new Car("AP-5678", Color.BLUE)));
@@ -42,7 +41,6 @@ class OwnerTest {
         owner.addOwnedParkingLot(parkingLot);
 
         Car car = new Car("AP-1234", Color.RED);
-
         Ticket ticket = owner.park(car);
 
         owner.unpark(ticket);
