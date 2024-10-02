@@ -21,9 +21,7 @@ public class ParkingLot {
             slots.add(new Slot());
         }
     }
-    public void addAssistant(Attendent assistant) {
-        assistants.add(assistant);
-    }
+
     private Slot findNearestSlot() {
         for (Slot slot : slots) {
             if (slot.isFree()) {
@@ -96,6 +94,10 @@ public class ParkingLot {
             }
         }
         return count;
+    }
+
+    public void addAssistant(Attendent assistant) {
+        assistants.add(assistant);
     }
 
     public void addPoliceman(Policeman policeman) {

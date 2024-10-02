@@ -196,27 +196,6 @@ class AttendentTest {
     }
 
     @Test
-    public void testSmartParkingEvenDistribution() {
-        Attendent attendent = new Attendent();
-        ParkingLot firstparkingLot = new ParkingLot(2);
-        ParkingLot secondparkingLot = new ParkingLot(2);
-        attendent.assign(firstparkingLot);
-        attendent.assign(secondparkingLot);
-
-        Car firstCar = new Car("AP-1234", Color.RED);
-        Car secondCar = new Car("AP-5678", Color.BLUE);
-        Car thirdCar = new Car("AP-9101", Color.GREEN);
-
-        attendent.park(firstCar);
-        attendent.park(secondCar);
-        attendent.park(thirdCar);
-
-        assertEquals(2, firstparkingLot.countParkedCars());
-        assertEquals(1, secondparkingLot.countParkedCars());
-
-    }
-
-    @Test
     public void testAssigningSameParkingLotToDifferentAttendent() throws Exception {
         ParkingLot ParkingLot = new ParkingLot(5);
         Attendent firstAttendant = new Attendent();
@@ -228,5 +207,27 @@ class AttendentTest {
         });
 
     }
+
+    @Test
+    public void testAttendentParksCarsSequentially() {
+        Attendent attendent = new Attendent();
+        ParkingLot firstParkingLot = new ParkingLot(2);
+        ParkingLot secondParkingLot = new ParkingLot(2);
+        attendent.assign(firstParkingLot);
+        attendent.assign(secondParkingLot);
+
+        Car firstCar = new Car("AP-1234", Color.RED);
+        Car secondCar = new Car("AP-5678", Color.BLUE);
+        Car thirdCar = new Car("AP-9101", Color.GREEN);
+
+        attendent.park(firstCar);
+        attendent.park(secondCar);
+        attendent.park(thirdCar);
+
+        // Attendent parks in the first lot until full
+        assertEquals(2, firstParkingLot.countParkedCars());
+        assertEquals(1, secondParkingLot.countParkedCars());
+    }
+
 
 }
