@@ -1,7 +1,8 @@
-package org.example;
+package org.example.Implementations;
 import org.example.Exceptions.*;
 import org.example.Enums.Color;
-import org.example.Slot;
+import org.example.Interfaces.Attendent;
+
 import java.util.ArrayList;
 import java.util.List;
 

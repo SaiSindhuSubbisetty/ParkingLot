@@ -1,10 +1,13 @@
-package org.example;
+package org.example.Implementations;
 
 import org.example.Enums.OwnerType;
 import org.example.Exceptions.ParkingLotAlreadyAssignmentException;
+import org.example.Interfaces.Attendent;
+import org.example.Interfaces.Notifiable;
+
 import java.util.ArrayList;
 
-public class Owner extends Attendent implements Notifiable {
+public class Owner implements Notifiable {
     private OwnerType ownerType;
     private Attendent assignedAttendent;
     private final ArrayList<ParkingLot> ownedParkingLots = new ArrayList<>();
@@ -19,12 +22,10 @@ public class Owner extends Attendent implements Notifiable {
         this.assignedAttendent = ownerType.getAttendant(); // Get the attendant based on owner type
     }
 
-    @Override
     public Ticket park(Car car) {
         return assignedAttendent.park(car);
     }
 
-    @Override
     public Car unpark(Ticket ticket) {
         return assignedAttendent.unpark(ticket);
     }

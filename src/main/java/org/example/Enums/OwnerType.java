@@ -1,8 +1,8 @@
 package org.example.Enums;
 
-import org.example.Attendent;
-import org.example.NormalAttendent;
-import org.example.SmartAttendent;
+import org.example.Implementations.NormalAttendent;
+import org.example.Implementations.SmartAttendent;
+import org.example.Interfaces.Attendent;
 
 public enum OwnerType {
     SMART {
@@ -20,4 +20,3 @@ public enum OwnerType {
 
     public abstract Attendent getAttendant();
 }
-

@@ -2,7 +2,12 @@ package org.example;
 
 import org.example.Enums.Color;
 import org.example.Enums.OwnerType;
+import org.example.Exceptions.ParkingLotAlreadyAssignmentException;
 import org.example.Exceptions.ParkingLotIsFullException;
+import org.example.Implementations.Car;
+import org.example.Implementations.Owner;
+import org.example.Implementations.ParkingLot;
+import org.example.Implementations.Ticket;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,5 +90,20 @@ class OwnerTest {
 
         assertThrows(ParkingLotIsFullException.class, () -> owner.park(new Car("AP-5678", Color.BLUE)));
     }
+
+    @Test
+    public void testOwnerNotifiedWhenParkingLotAvailable() throws ParkingLotAlreadyAssignmentException {
+        Owner owner = new Owner(OwnerType.NORMAL);
+        ParkingLot parkingLot = new ParkingLot(1);
+        owner.addOwnedParkingLot(parkingLot);
+
+        Car car = new Car("AP-1234", Color.RED);
+        Ticket ticket = owner.park(car);
+
+        owner.unpark(ticket);
+
+        assertFalse(parkingLot.isFull(), "Owner should be notified when parking lot has available slots");
+    }
+
 
 }

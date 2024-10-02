@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Implementations;
 
 import org.example.Enums.Color;
 

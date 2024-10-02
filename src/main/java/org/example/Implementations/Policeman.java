@@ -1,4 +1,6 @@
-package org.example;
+package org.example.Implementations;
+
+import org.example.Interfaces.Notifiable;
 
 public class Policeman implements Notifiable {
 

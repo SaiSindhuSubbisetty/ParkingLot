@@ -5,6 +5,7 @@ import org.example.Exceptions.CarAlreadyParkedException;
 import org.example.Exceptions.CarNeedsRegistrationNumberException;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.ParkingLotIsFullException;
+import org.example.Implementations.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -222,13 +223,13 @@ class ParkingLotTest {
     @Test
     public void testAssignMultipleAssistantsToParkingLot() {
         ParkingLot parkingLot = new ParkingLot(2);
-        Attendent attendent1 = new Attendent();
-        Attendent attendent2 = new Attendent();
+        NormalAttendent attendent1 = new NormalAttendent();
+        NormalAttendent attendent2 = new NormalAttendent();
 
         parkingLot.addAssistant(attendent1);
         parkingLot.addAssistant(attendent2);
 
-        assertDoesNotThrow(() -> parkingLot.addAssistant(new Attendent()));
+        assertDoesNotThrow(() -> parkingLot.addAssistant(new NormalAttendent()));
     }
 
     @Test

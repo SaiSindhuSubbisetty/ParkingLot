@@ -1,12 +1,10 @@
-package org.example;
+package org.example.Implementations;
 
-import org.example.Car;
 import org.example.Enums.Color;
 import org.example.Exceptions.CarNeedsRegistrationNumberException;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.InvalidTicketException;
 import org.example.Exceptions.SlotIsOccupiedException;
-import org.example.Ticket;
 
 public class Slot {
     private Car car;

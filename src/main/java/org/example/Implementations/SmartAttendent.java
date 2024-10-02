@@ -1,13 +1,17 @@
-package org.example;
+package org.example.Implementations;
 
-import org.example.Exceptions.CarAlreadyParkedException;
-import org.example.Exceptions.ParkingLotIsFullException;
-import org.example.Exceptions.SelectedLotIsFullException;
+import org.example.Exceptions.*;
+import org.example.Interfaces.Attendent;
 import java.util.ArrayList;
 
-public class SmartAttendent extends Attendent {
+public class SmartAttendent implements Attendent {
     private final ArrayList<ParkingLot> assignedParkingLots = new ArrayList<>();
     private final ArrayList<Car> parkedCars = new ArrayList<>();
+
+    @Override
+    public void assign(ParkingLot parkingLot) throws ParkingLotAlreadyAssignmentException {
+        Attendent.super.assign(parkingLot, assignedParkingLots);
+    }
 
     @Override
     public Ticket park(Car car) {
@@ -15,9 +19,8 @@ public class SmartAttendent extends Attendent {
             throw new CarAlreadyParkedException("Car is already parked");
         }
         if (assignedParkingLots.isEmpty()) {
-            throw new ParkingLotIsFullException.NoParkingLotAssignedException("No Parking Lot assigned.");
+            throw new NoParkingLotAssignedException("No Parking Lot assigned.");
         }
-
         ParkingLot selectedLot = null;
         int minCars = Integer.MAX_VALUE;
         for (ParkingLot lot : assignedParkingLots) {
@@ -27,14 +30,14 @@ public class SmartAttendent extends Attendent {
             }
         }
         if (selectedLot == null) {
-            throw new SelectedLotIsFullException("Selected Lot is full.");
+            throw new ParkingLotIsFullException("All parking lots are full");
         }
         parkedCars.add(car);
         return selectedLot.park(car);
     }
 
-    public void assign(ParkingLot parkingLot) {
-        assignedParkingLots.add(parkingLot);  // Ensure parking lots can be assigned
+    @Override
+    public Car unpark(Ticket ticket) {
+        return Attendent.super.unpark(ticket, assignedParkingLots, parkedCars);
     }
-
 }

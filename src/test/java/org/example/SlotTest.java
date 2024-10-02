@@ -5,6 +5,9 @@ import org.example.Exceptions.CarNeedsRegistrationNumberException;
 import org.example.Exceptions.CarNotFoundException;
 import org.example.Exceptions.InvalidTicketException;
 import org.example.Exceptions.SlotIsOccupiedException;
+import org.example.Implementations.Car;
+import org.example.Implementations.Slot;
+import org.example.Implementations.Ticket;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

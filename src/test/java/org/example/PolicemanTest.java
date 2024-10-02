@@ -2,6 +2,10 @@ package org.example;
 
 import org.example.Enums.Color;
 import org.example.Exceptions.ParkingLotIsFullException;
+import org.example.Implementations.Car;
+import org.example.Implementations.ParkingLot;
+import org.example.Implementations.Policeman;
+import org.example.Implementations.Ticket;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
