@@ -223,13 +223,13 @@ class ParkingLotTest {
     @Test
     public void testAssignMultipleAssistantsToParkingLot() {
         ParkingLot parkingLot = new ParkingLot(2);
-        NormalAttendent attendent1 = new NormalAttendent();
-        NormalAttendent attendent2 = new NormalAttendent();
+        Attendent attendent1 = new Attendent();
+        Attendent attendent2 = new Attendent();
 
         parkingLot.addAssistant(attendent1);
         parkingLot.addAssistant(attendent2);
 
-        assertDoesNotThrow(() -> parkingLot.addAssistant(new NormalAttendent()));
+        assertDoesNotThrow(() -> parkingLot.addAssistant(new Attendent()));
     }
 
     @Test

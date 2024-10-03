@@ -1,7 +1,7 @@
 package org.example.Implementations;
 import org.example.Exceptions.*;
 import org.example.Enums.Color;
-import org.example.Interfaces.Attendent;
+import org.example.Interfaces.Attendable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,7 @@ import java.util.List;
 public class ParkingLot {
     private final int totalSlots;
     private final List<Slot> slots;
-    private final List<Attendent> assistants = new ArrayList<>();
-    private Owner owner;
+    private final List<Attendable> assistants = new ArrayList<>();
     private Policeman policeman;
     public ParkingLot(int totalSlots) {
         if (totalSlots <= 0) {
@@ -97,7 +96,7 @@ public class ParkingLot {
         return count;
     }
 
-    public void addAssistant(Attendent assistant) {
+    public void addAssistant(Attendable assistant) {
         assistants.add(assistant);
     }
 
@@ -106,17 +105,11 @@ public class ParkingLot {
     }
 
     private void notifyFull() {
-        if (owner != null) {
-            owner.notifyFull(this);
-        }
         if (policeman != null) {
             policeman.notifyFull(this);
         }
     }
     private void notifyAvailable() {
-        if (owner != null) {
-            owner.notifyAvailable(this);
-        }
         if (policeman != null) {
             policeman.notifyAvailable(this);
         }
