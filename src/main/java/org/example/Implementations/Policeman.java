@@ -4,13 +4,17 @@ import org.example.Interfaces.Notifiable;
 
 public class Policeman implements Notifiable {
 
-    @Override
-    public void notifyFull(ParkingLot parkingLot) {
-        System.out.println("Policeman notified: Parking lot " + parkingLot + " is full.");
+    public Policeman() {
+        super();
     }
 
     @Override
-    public void notifyAvailable(ParkingLot parkingLot) {
-        System.out.println("Policeman notified: Parking lot " + parkingLot + " has available slots.");
+    public void notifyFull(int parkingLotId) {
+        System.out.println("Policeman notified: Parking lot with ID " + parkingLotId + " is full.");
+    }
+
+    @Override
+    public void notifyAvailable(int parkingLotId) {
+        System.out.println("Policeman notified: Parking lot with ID " + parkingLotId + " has available slots.");
     }
 }

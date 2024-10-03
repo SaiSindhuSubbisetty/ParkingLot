@@ -10,42 +10,157 @@ import static org.junit.jupiter.api.Assertions.*;
 class AttendentTest {
 
     @Test
-    public void testAssignParkingLotToAttendant() {
-        Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(1);
-
-        assertDoesNotThrow(() -> attendent.assign(parkingLot));
+    public void testCreatingParkingLotOwner()  {
+        Owner owner = new Owner();
+        assertDoesNotThrow(() -> {
+            owner.createParkingLot(2);
+        });
     }
 
     @Test
-    public void testCannotAssignSameParkingLotTwice() {
-        Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(1);
-        attendent.assign(parkingLot);
+    public void testCreatingParkingLotOfTotalSlotsZero()  {
+        Owner owner = new Owner();
+        assertThrows(Exception.class, () -> {
+            owner.createParkingLot(0);
+        });
+    }
 
-        Exception exception = assertThrows(ParkingLotAlreadyAssignmentException.class, () -> attendent.assign(parkingLot));
-        assertEquals("Parking lot already assigned.", exception.getMessage());
+
+    @Test
+    public void testAssignParkingLotToAttendent() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(2);
+        Attendent attendent = new Attendent();
+        
+        owner.assignParkingLotToAttendent(attendent,parkingLot);
+
+        assertDoesNotThrow(() -> owner.assign(parkingLot));
     }
 
     @Test
-    public void testAttendantParksCarAndReturnsTicket() {
+    public void testOwnerAssignMultipleParkingLotToSingleAttendent() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot firstParkingLot = owner.createParkingLot(3);
+        ParkingLot secondParkingLot = owner.createParkingLot(3);
+        Attendent attendant = new Attendent();
+
+        assertDoesNotThrow(()->{
+            owner.assignParkingLotToAttendent(attendant, firstParkingLot);
+            owner.assignParkingLotToAttendent(attendant, secondParkingLot);
+        });
+    }
+
+    @Test
+    public void testOwnerAssignMultipleParkingLotToMultipleAttendents() throws Exception {
+        Owner owner = new Owner();
+        Attendent firstAttendant = new Attendent();
+        Attendent secondAttendant = new Attendent();
+        
+        ParkingLot firstParkingLot = owner.createParkingLot(3);
+        ParkingLot secondParkingLot = owner.createParkingLot(3);
+
+        assertDoesNotThrow(()->{
+            owner.assignParkingLotToAttendent(firstAttendant, firstParkingLot);
+            owner.assignParkingLotToAttendent(secondAttendant, secondParkingLot);
+        });
+    }
+
+    @Test
+    public void testExceptionAssignParkingLotIsNotOwnedByOwner() throws Exception {
+        Owner owner = new Owner();
+        Owner secondOwner = new Owner();
+        Attendent firstAttendant = new Attendent();
+        
+        ParkingLot firstParkingLot = secondOwner.createParkingLot(3);
+
+        assertThrows(notOwnedParkingLotException.class, () -> {
+            owner.assignParkingLotToAttendent(firstAttendant, firstParkingLot);
+        });
+    }
+
+    @Test
+    public void testSingleAttendantCannotHaveMultipleOwners() throws Exception {
+        Owner owner = new Owner();
+        Owner secondOwner = new Owner();
+        Attendent firstAttendant = new Attendent();
+
+        ParkingLot firstParkingLot = owner.createParkingLot(3);
+        ParkingLot secondParkingLot = secondOwner.createParkingLot(3);
+
+        owner.assignParkingLotToAttendent(firstAttendant, firstParkingLot);
+        secondOwner.assignParkingLotToAttendent(firstAttendant, secondParkingLot);
+
+    }
+
+    @Test
+    public void testOwnerAssignParkingLotToAttendantToItself() throws Exception {
+        Owner owner = new Owner();
+
+        ParkingLot firstParkingLot = owner.createParkingLot(2);
+        ParkingLot secondParkingLot = owner.createParkingLot(3);
+
+        owner.assignParkingLotToSelf(secondParkingLot);
+        assertDoesNotThrow(() -> {
+            owner.assignParkingLotToSelf(firstParkingLot);
+        });
+    }
+
+    @Test
+    void testAssignTwoParkingLots() throws Exception {
+        Owner owner = new Owner();
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(2);
-        attendent.assign(parkingLot);
+
+        ParkingLot firstParkingLot = owner.createParkingLot(5);
+        ParkingLot secondParkingLot = owner.createParkingLot(5);
+
+        assertDoesNotThrow(() -> owner.assignParkingLotToAttendent(attendent,firstParkingLot));
+        assertDoesNotThrow(() -> owner.assignParkingLotToAttendent(attendent,secondParkingLot));
+    }
+
+    @Test
+    public void testParkingOwnerParkingACar() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot firstParkingLot = owner.createParkingLot(2);
+        Car firstCar = new Car("AP-5678", Color.BLUE);
+
+        owner.assignParkingLotToSelf(firstParkingLot);
+        assertDoesNotThrow(() -> {
+            owner.park(firstCar);
+        });
+    }
+
+    @Test
+    public void testParkingLotOwnerUnParkTheCar() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot firstParkingLot = owner.createParkingLot(2);
+        Car firstCar = new Car("AP-5678", Color.BLUE);
+        owner.assignParkingLotToSelf(firstParkingLot);
+
+        Ticket ticket = owner.park(firstCar);
+        Car actualCar = owner.unpark(ticket);
+        assertEquals(firstCar, actualCar);
+    }
+    @Test
+    public void testattendentParksCarAndReturnsTicket() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(2);
+        Attendent attendent = new Attendent();
+        owner.assignParkingLotToAttendent(attendent,parkingLot);
 
         Car car = new Car("AP-1234", Color.RED);
 
         Ticket ticket = attendent.park(car);
 
-        assertNotNull(ticket, "Attendant should return a valid parking ticket");
+        assertNotNull(ticket, "attendent should return a valid parking ticket");
         assertTrue(parkingLot.isCarAlreadyParked(car), "Car should be parked in the parking lot");
     }
 
     @Test
-    public void testAttendantCannotParkSameCarTwice() {
+    public void testattendentCannotParkSameCarTwice() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(2);
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(2);
-        attendent.assign(parkingLot);
+        owner.assignParkingLotToAttendent(attendent,parkingLot);
 
         Car car = new Car("AP-1234", Color.RED);
 
@@ -56,10 +171,11 @@ class AttendentTest {
     }
 
     @Test
-    public void testUnparkCarWithValidTicket() {
+    public void testUnparkCarWithValidTicket() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(2);
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(2);
-        attendent.assign(parkingLot);
+        owner.assignParkingLotToAttendent(attendent,parkingLot);
 
         Car car = new Car("AP-1234", Color.RED);
         Ticket ticket = attendent.park(car);
@@ -71,10 +187,12 @@ class AttendentTest {
     }
 
     @Test
-    public void testUnparkCarWithInvalidTicket() {
+    public void testUnparkCarWithInvalidTicket() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(2);
+
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(2);
-        attendent.assign(parkingLot);
+        owner.assignParkingLotToAttendent(attendent,parkingLot);
 
         Ticket invalidTicket = new Ticket(); // Invalid ticket, not tied to any car
 
@@ -83,10 +201,12 @@ class AttendentTest {
     }
 
     @Test
-    public void testCannotUnparkSameCarTwice() {
+    public void testCannotUnparkSameCarTwice() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(2);
+
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(1);
-        attendent.assign(parkingLot);
+        owner.assignParkingLotToAttendent(attendent,parkingLot);
 
         Car car = new Car("AP-1234", Color.RED);
         Ticket ticket = attendent.park(car);
@@ -98,75 +218,70 @@ class AttendentTest {
     }
 
     @Test
-    public void testAttendantThrowsWhenAllLotsFull() {
+    public void testattendentThrowsWhenAllLotsFull() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(1);
         Attendent attendent = new Attendent();
-        ParkingLot parkingLot = new ParkingLot(1); // Only 1 spot
-        attendent.assign(parkingLot);
 
-        Car car1 = new Car("AP-1234", Color.RED);
-        attendent.park(car1); // Fills the lot
+        owner.assignParkingLotToAttendent(attendent,parkingLot);
 
-        Car car2 = new Car("AP-5678", Color.BLUE);
+        Car firstCar = new Car("AP-1234", Color.RED);
+        attendent.park(firstCar); // Fills the lot
 
-        Exception exception = assertThrows(ParkingLotIsFullException.class, () -> attendent.park(car2));
+        Car secondCar = new Car("AP-5678", Color.BLUE);
+
+        Exception exception = assertThrows(ParkingLotIsFullException.class, () -> attendent.park(secondCar));
         assertEquals("All parking lots are full", exception.getMessage());
     }
 
     @Test
-    public void testAttendantParksCarsSequentially() {
+    public void testattendentParksCarsSequentially() throws Exception {
+        Owner owner = new Owner();
+
+        ParkingLot firstLot = owner.createParkingLot(2);
+        ParkingLot secondLot = owner.createParkingLot(2);
+
         Attendent attendent = new Attendent();
-        ParkingLot firstLot = new ParkingLot(2);
-        ParkingLot secondLot = new ParkingLot(2);
-        attendent.assign(firstLot);
-        attendent.assign(secondLot);
 
-        Car car1 = new Car("AP-1234", Color.RED);
-        Car car2 = new Car("AP-5678", Color.BLUE);
-        Car car3 = new Car("AP-9101", Color.GREEN);
+        owner.assignParkingLotToAttendent(attendent,firstLot);
+        owner.assignParkingLotToAttendent(attendent, secondLot);
 
-        attendent.park(car1);
-        attendent.park(car2);
-        attendent.park(car3);  // Third car should go to the second lot
+        Car firstCar = new Car("AP-1234", Color.RED);
+        Car secondCar = new Car("AP-5678", Color.BLUE);
+        Car thirdCar = new Car("AP-9101", Color.GREEN);
+
+        attendent.park(firstCar);
+        attendent.park(secondCar);
+        attendent.park(thirdCar);  // Third car should go to the second lot
 
         assertEquals(1, firstLot.countParkedCars(), "First lot should have 2 cars");
         assertEquals(2, secondLot.countParkedCars(), "Second lot should have 1 car");
     }
 
-
     @Test
-    public void testNormalAttendantParksCarInFirstAvailableLot() {
+    public void testNormalattendentThrowsWhenAllLotsFull() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot lot = owner.createParkingLot(1);
         Attendent attendent = new Attendent();
-        ParkingLot lot1 = new ParkingLot(1);
-        ParkingLot lot2 = new ParkingLot(1);
-        attendent.assign(lot1);
-        attendent.assign(lot2);
 
-        Car car = new Car("AP-1234", Color.RED);
-        Ticket ticket = attendent.park(car);
+        owner.assignParkingLotToAttendent(attendent,lot);
 
-        assertNotNull(ticket, "Ticket should not be null");
-    }
+        Car firstCar = new Car("AP-1234", Color.RED);
+        attendent.park(firstCar); // Fills the lot
 
-    @Test
-    public void testNormalAttendantThrowsWhenAllLotsFull() {
-        Attendent attendent = new Attendent();
-        ParkingLot lot = new ParkingLot(1);
-        attendent.assign(lot);
+        Car secondCar = new Car("AP-5678", Color.BLUE);
 
-        Car car1 = new Car("AP-1234", Color.RED);
-        attendent.park(car1); // Fills the lot
-
-        Car car2 = new Car("AP-5678", Color.BLUE);
-
-        assertThrows(ParkingLotIsFullException.class, () -> attendent.park(car2),
+        assertThrows(ParkingLotIsFullException.class, () -> attendent.park(secondCar),
                 "Exception should be thrown when trying to park in a full lot");
     }
 
     @Test
-    public void testNormalAttendantThrowsWhenCarAlreadyParked() {
+    public void testNormalattendentThrowsWhenCarAlreadyParked() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot lot = owner.createParkingLot(2);
         Attendent attendent = new Attendent();
-        ParkingLot lot = new ParkingLot(2);
-        attendent.assign(lot);
+
+        owner.assignParkingLotToAttendent(attendent,lot);
 
         Car car = new Car("AP-1234", Color.RED);
         attendent.park(car); // Park the car
@@ -176,44 +291,49 @@ class AttendentTest {
     }
 
     @Test
-    public void testSmartAttendantParksCarInLotWithFewestCars() {
+    public void testSmartattendentParksCarInLotWithFewestCars() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot firstLot = owner.createParkingLot(2);
+        ParkingLot secondLot = owner.createParkingLot(2);
         Attendent smartAttendent = new Attendent(new SmartNextLotStratergy());
-        ParkingLot lot1 = new ParkingLot(2);
-        ParkingLot lot2 = new ParkingLot(2);
-        smartAttendent.assign(lot1);
-        smartAttendent.assign(lot2);
 
-        Car car1 = new Car("AP-1234", Color.RED);
-        smartAttendent.park(car1); // Should park in lot1
+        owner.assignParkingLotToAttendent(smartAttendent,firstLot);
+        owner.assignParkingLotToAttendent(smartAttendent,secondLot);
 
-        Car car2 = new Car("AP-5678", Color.BLUE);
-        Ticket ticket2 = smartAttendent.park(car2); // Should park in lot2 (fewer cars)
+        Car firstCar = new Car("AP-1234", Color.RED);
+        smartAttendent.park(firstCar); // Should park in firstLot
 
-        assertNotNull(ticket2, "Ticket should not be null for car2");
-        assertTrue(lot2.isCarAlreadyParked(car2), "Car2 should be parked in lot2");
+        Car secondCar = new Car("AP-5678", Color.BLUE);
+        Ticket ticket2 = smartAttendent.park(secondCar); // Should park in secondLot (fewer cars)
+
+        assertNotNull(ticket2, "Ticket should not be null for secondCar");
+        assertTrue(secondLot.isCarAlreadyParked(secondCar), "secondCar should be parked in secondLot");
     }
 
     @Test
-    public void testSmartAttendantThrowsWhenAllLotsFull() {
+    public void testSmartattendentThrowsWhenAllLotsFull() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot firstLot = owner.createParkingLot(1);
+        ParkingLot secondLot = owner.createParkingLot(1);
         Attendent smartAttendent = new Attendent(new SmartNextLotStratergy());
-        ParkingLot lot1 = new ParkingLot(1);
-        ParkingLot lot2 = new ParkingLot(1);
-        smartAttendent.assign(lot1);
-        smartAttendent.assign(lot2);
 
-        Car car1 = new Car("AP-1234", Color.RED);
-        smartAttendent.park(car1); // Fills lot1
+        owner.assignParkingLotToAttendent(smartAttendent,firstLot);
+        owner.assignParkingLotToAttendent(smartAttendent,secondLot);
 
-        Car car2 = new Car("AP-5678", Color.BLUE);
-        smartAttendent.park(car2); // Fills lot2
+        Car firstCar = new Car("AP-1234", Color.RED);
+        smartAttendent.park(firstCar);
 
-        Car car3 = new Car("AP-9012", Color.GREEN);
-        assertThrows(ParkingLotIsFullException.class, () -> smartAttendent.park(car3),
+        Car secondCar = new Car("AP-5678", Color.BLUE);
+        smartAttendent.park(secondCar);
+
+        Car thirdCar = new Car("AP-9012", Color.GREEN);
+        assertThrows(ParkingLotIsFullException.class, () -> smartAttendent.park(thirdCar),
                 "Exception should be thrown when trying to park in a full lot");
     }
 
     @Test
-    public void testSmartAttendantThrowsWhenNoParkingLotAssigned() {
+    public void testSmartattendentThrowsWhenNoParkingLotAssigned() {
+        Owner owner = new Owner();
         Attendent smartAttendent = new Attendent(new SmartNextLotStratergy());
         Car car = new Car("AP-1234", Color.RED);
 
@@ -222,10 +342,11 @@ class AttendentTest {
     }
 
     @Test
-    public void testSmartAttendantCannotParkSameCarTwice() {
+    public void testSmartattendentCannotParkSameCarTwice() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot lot = owner.createParkingLot(2);
         Attendent smartAttendent = new Attendent(new SmartNextLotStratergy());
-        ParkingLot lot = new ParkingLot(2);
-        smartAttendent.assign(lot);
+        owner.assignParkingLotToAttendent(smartAttendent, lot);
 
         Car car = new Car("AP-1234", Color.RED);
         smartAttendent.park(car); // Park the car
@@ -235,12 +356,14 @@ class AttendentTest {
     }
 
     @Test
-    public void testSmartAttendantUnparksCarWithValidTicket() {
+    public void testSmartattendentUnparksCarWithValidTicket() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot firstLot = owner.createParkingLot(2);
+        ParkingLot secondLot = owner.createParkingLot(2);
         Attendent smartAttendent = new Attendent(new SmartNextLotStratergy());
-        ParkingLot lot1 = new ParkingLot(2);
-        ParkingLot lot2 = new ParkingLot(2);
-        smartAttendent.assign(lot1);
-        smartAttendent.assign(lot2);
+
+        owner.assignParkingLotToAttendent(smartAttendent,firstLot);
+        owner.assignParkingLotToAttendent(smartAttendent,secondLot);
 
         Car car = new Car("AP-1234", Color.RED);
         Ticket ticket = smartAttendent.park(car);
@@ -248,14 +371,16 @@ class AttendentTest {
         Car unparkedCar = smartAttendent.unpark(ticket);
 
         assertEquals(car, unparkedCar, "Unparked car should match the parked car");
-        assertFalse(lot1.isCarAlreadyParked(car), "The car should no longer be parked in the lot");
+        assertFalse(firstLot.isCarAlreadyParked(car), "The car should no longer be parked in the lot");
     }
 
     @Test
-    public void testSmartAttendantUnparksCarWithInvalidTicket() {
+    public void testSmartattendentUnparksCarWithInvalidTicket() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot firstLot = owner.createParkingLot(2);
         Attendent smartAttendent = new Attendent(new SmartNextLotStratergy());
-        ParkingLot lot1 = new ParkingLot(2);
-        smartAttendent.assign(lot1);
+
+        owner.assignParkingLotToAttendent(smartAttendent,firstLot);
 
         Ticket invalidTicket = new Ticket();
 
@@ -264,33 +389,112 @@ class AttendentTest {
     }
 
     @Test
-    public void testSmartAttendantAssignsMultipleLots() {
+    public void testSmartattendentAssignsMultipleLots() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot firstLot = owner.createParkingLot(2);
+        ParkingLot secondLot = owner.createParkingLot(3);
         Attendent smartAttendent = new Attendent(new SmartNextLotStratergy());
-        ParkingLot lot1 = new ParkingLot(2);
-        ParkingLot lot2 = new ParkingLot(3);
 
         assertDoesNotThrow(() -> {
-            smartAttendent.assign(lot1);
-            smartAttendent.assign(lot2);
+            owner.assign(firstLot);
+            owner.assign(secondLot);
         }, "No exception should be thrown when assigning multiple parking lots");
     }
 
+
     @Test
-    public void testSmartAttendantParksCarsInLotWithMoreCapacity() {
-        Attendent smartAttendent = new Attendent(new SmartNextLotStratergy());
-        ParkingLot lot1 = new ParkingLot(1);
-        ParkingLot lot2 = new ParkingLot(3);
-        smartAttendent.assign(lot1);
-        smartAttendent.assign(lot2);
+    void testAssignParkingLot() throws Exception {
+        Owner owner = new Owner();
+        Attendent attendent = new Attendent();
 
-        Car car1 = new Car("AP-1234", Color.RED);
-        Car car2 = new Car("AP-5678", Color.BLUE);
+        ParkingLot parkingLot = owner.createParkingLot(5);
 
-        smartAttendent.park(car1); // Should park in lot1
-        smartAttendent.park(car2); // Should park in lot2 (more capacity)
-
-        assertTrue(lot1.isCarAlreadyParked(car1), "Car1 should be parked in lot1");
-        assertTrue(lot2.isCarAlreadyParked(car2), "Car2 should be parked in lot2");
+        assertDoesNotThrow(() -> owner.assign(parkingLot));
     }
+
+    @Test
+    void testAssignAParkingLotTwice() throws Exception {
+        Owner owner = new Owner();
+        Attendent attendent = new Attendent();
+        ParkingLot parkingLot = owner.createParkingLot(5);
+
+        assertDoesNotThrow(() -> owner.assign(parkingLot));
+
+        assertThrows(ParkingLotAlreadyAssignmentException.class, () -> owner.assign(parkingLot));
+    }
+
+    @Test
+    void testParkIfCarIsAlreadyParked() throws Exception {
+        Owner owner = new Owner();
+        Attendent attendent = new Attendent();
+
+        ParkingLot parkingLot = owner.createParkingLot(5);
+        owner.assignParkingLotToAttendent(attendent,parkingLot);
+
+        Car car = new Car("AP-1234", Color.RED);
+
+        attendent.park(car);
+
+        assertThrows(CarAlreadyParkedException.class, () -> attendent.park(car));
+    }
+
+    @Test
+    void testParkIfCarIsAlreadyParkedInAnotherParkingLot() throws Exception {
+        Owner owner = new Owner();
+        Attendent attendent = new Attendent();
+
+        ParkingLot firstParkingLot = owner.createParkingLot(1);
+        ParkingLot secondParkingLot = owner.createParkingLot(5);
+
+        owner.assignParkingLotToAttendent(attendent,firstParkingLot);
+        owner.assignParkingLotToAttendent(attendent,secondParkingLot);
+
+        Car firstCar = new Car("AP-1234", Color.RED);
+        Car secondCar = new Car("AP-5678", Color.BLUE);
+
+        attendent.park(firstCar);
+        attendent.park(secondCar);
+
+        assertThrows(CarAlreadyParkedException.class, () -> attendent.park(firstCar));
+    }
+
+    @Test
+    void testUnparkIfTicketIsInvalidForSecondCar() throws Exception {
+        Owner owner = new Owner();
+        Attendent attendent = new Attendent();
+
+        ParkingLot parkingLot = owner.createParkingLot(5);
+        owner.assignParkingLotToAttendent(attendent,parkingLot);
+
+        Car firstCar = new Car("AP-1234", Color.RED);
+        Car secondCar = new Car("AP-5678", Color.BLUE);
+
+        attendent.park(firstCar);
+        Ticket ticket =  attendent.park(secondCar);
+
+        assertThrows(InvalidTicketException.class, () -> attendent.unpark(ticket));
+    }
+
+    @Test
+    void testUnparkIfTicketIsInvalidForSecondParkingLot() throws Exception {
+        Owner owner = new Owner();
+        Attendent attendent = new Attendent();
+
+        ParkingLot firstParkingLot = owner.createParkingLot(1);
+        ParkingLot secondParkingLot = owner.createParkingLot(5);
+
+        owner.assignParkingLotToAttendent(attendent,firstParkingLot);
+        owner.assignParkingLotToAttendent(attendent,secondParkingLot);
+
+        Car firstCar = new Car("AP-1234", Color.RED);
+        Car secondCar = new Car("AP-5678", Color.BLUE);
+
+        attendent.park(firstCar);
+
+        Ticket ticket =  attendent.park(secondCar);
+
+        assertThrows(InvalidTicketException.class, () -> attendent.unpark(ticket));
+    }
+
 
 }

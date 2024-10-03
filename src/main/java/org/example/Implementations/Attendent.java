@@ -3,7 +3,7 @@ import org.example.Exceptions.*;
 import org.example.Interfaces.Attendable;
 import java.util.ArrayList;
 public class Attendent<T extends NextLotStratergy> implements Attendable {
-    private final ArrayList<ParkingLot> assignedParkingLots;
+    protected final ArrayList<ParkingLot> assignedParkingLots;
     private final ArrayList<Car> parkedCars = new ArrayList<>();
     private final T nextLotStrategy;
 
@@ -24,6 +24,7 @@ public class Attendent<T extends NextLotStratergy> implements Attendable {
         }
         assignedParkingLots.add(parkingLot);
     }
+
     @Override
     public Ticket park(Car car) {
         if (assignedParkingLots.isEmpty()) {

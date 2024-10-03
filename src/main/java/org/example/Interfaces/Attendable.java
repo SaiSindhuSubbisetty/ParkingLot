@@ -8,6 +8,7 @@ import org.example.Implementations.Ticket;
 import java.util.ArrayList;
 
 public interface Attendable {
+
     void assign(ParkingLot parkingLot) throws ParkingLotAlreadyAssignmentException;
 
     Ticket park(Car car) throws ParkingLotIsFullException, CarAlreadyParkedException;

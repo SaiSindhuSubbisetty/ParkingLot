@@ -1,21 +1,30 @@
 package org.example.Implementations;
-import org.example.Exceptions.*;
+
 import org.example.Enums.Color;
-import org.example.Interfaces.Attendable;
+import org.example.Exceptions.*;
+import org.example.Interfaces.Notifiable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class ParkingLot {
     private final int totalSlots;
     private final List<Slot> slots;
-    private final List<Attendable> assistants = new ArrayList<>();
-    private Policeman policeman;
-    public ParkingLot(int totalSlots) {
+    private final int parkingLotId;
+    private final HashSet<Notifiable> notifiables = new HashSet<>();
+    private Owner owner; // Added owner field
+
+    public ParkingLot(int totalSlots, Owner owner) {
         if (totalSlots <= 0) {
             throw new IllegalArgumentException("Parking lot size must be positive.");
         }
+        if (owner == null) {
+            throw new CannotCreateParkingLotWithoutOwner("Parking lot cannot be created without an owner.");
+        }
         this.totalSlots = totalSlots;
+        this.owner = owner;
+        this.parkingLotId = this.hashCode();
         this.slots = new ArrayList<>(totalSlots);
         for (int i = 0; i < totalSlots; i++) {
             slots.add(new Slot());
@@ -28,11 +37,12 @@ public class ParkingLot {
                 return slot;
             }
         }
-        throw new ParkingLotIsFullException("Parking lot is full");
+        throw new ParkingLotIsFullException("Parking lot is full.");
     }
+
     public Ticket park(Car car) {
         if (isFull()) {
-            throw new ParkingLotIsFullException("Parking lot is full");
+            throw new ParkingLotIsFullException("Parking lot is full.");
         }
         if (isCarAlreadyParked(car)) {
             throw new CarAlreadyParkedException("Car is already parked");
@@ -44,20 +54,22 @@ public class ParkingLot {
         }
         return ticket;
     }
+
     public Car unpark(Ticket ticket) throws InvalidTicketException {
         for (Slot slot : slots) {
             try {
                 Car car = slot.unPark(ticket);
-                if (!isFull()) {
-                    notifyAvailable();
+                if (!isFull()){
+                     notifyAvailable();
                 }
                 return car;
             } catch (CarNotFoundException e) {
                 // Continue searching in other slots
             }
         }
-        throw new CarNotFoundException("Car not found in the parking lot");
+        throw new CarNotFoundException("Car not found in the parking lot.");
     }
+
     public boolean isCarAlreadyParked(Car car) {
         for (Slot slot : slots) {
             if (slot.checkingCarInParkingSlot(car)) {
@@ -66,6 +78,7 @@ public class ParkingLot {
         }
         return false;
     }
+
     public boolean isFull() {
         for (Slot slot : slots) {
             if (slot.isFree()) {
@@ -96,24 +109,24 @@ public class ParkingLot {
         return count;
     }
 
-    public void addAssistant(Attendable assistant) {
-        assistants.add(assistant);
-    }
-
-    public void addPoliceman(Policeman policeman) {
-        this.policeman = policeman;
-    }
-
     private void notifyFull() {
-        if (policeman != null) {
-            policeman.notifyFull(this);
+        for (Notifiable notifiable : notifiables ) {
+            notifiable.notifyFull(this.parkingLotId);
         }
     }
+
     private void notifyAvailable() {
-        if (policeman != null) {
-            policeman.notifyAvailable(this);
+        for (Notifiable notifiable : notifiables) {
+            notifiable.notifyAvailable(this.parkingLotId);
         }
     }
 
-
+    public void registerNotifiable(Notifiable notifiable) {
+        if (!notifiables.contains(notifiable)) {
+            notifiables.add(notifiable);
+        }
+    }
+    public int getParkingLotId(){
+        return parkingLotId;
+    }
 }
