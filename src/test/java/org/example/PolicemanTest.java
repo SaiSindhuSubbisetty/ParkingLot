@@ -27,42 +27,42 @@ class PolicemanTest {
     }
 
     @Test
-    public void testNotifyFullAllParkingLotsAreFull() throws Exception {
+    public void testPolicemanNotifyFullAllParkingLotsAreFull() throws Exception {
         Owner owner = new Owner();
-        ParkingLot lot1 = owner.createParkingLot(1);
-        ParkingLot lot2 = owner.createParkingLot(1);
+        ParkingLot firstlot = owner.createParkingLot(1);
+        ParkingLot secondlot = owner.createParkingLot(1);
         Policeman policemanSpy = spy(new Policeman());
 
-        lot1.registerNotifiable(policemanSpy);
-        lot2.registerNotifiable(policemanSpy);
+        firstlot.registerNotifiable(policemanSpy);
+        secondlot.registerNotifiable(policemanSpy);
 
-        lot1.park(new Car("AP-1234", Color.RED));
-        lot2.park(new Car("AP-5678", Color.BLUE));
+        firstlot.park(new Car("AP-1234", Color.RED));
+        secondlot.park(new Car("AP-5678", Color.BLUE));
 
-        assertThrows(ParkingLotIsFullException.class, () -> lot1.park(new Car("AP-9999", Color.GREEN)));
-        assertThrows(ParkingLotIsFullException.class, () -> lot2.park(new Car("AP-9998", Color.YELLOW)));
+        assertThrows(ParkingLotIsFullException.class, () -> firstlot.park(new Car("AP-9999", Color.GREEN)));
+        assertThrows(ParkingLotIsFullException.class, () -> secondlot.park(new Car("AP-9998", Color.YELLOW)));
 
-        verify(policemanSpy).notifyFull(lot1.getParkingLotId());
-        verify(policemanSpy).notifyFull(lot2.getParkingLotId());
+        verify(policemanSpy).notifyFull(firstlot.getParkingLotId());
+        verify(policemanSpy).notifyFull(secondlot.getParkingLotId());
     }
 
     @Test
-    public void testNotifyFullSomeParkingLotsAreFull() throws Exception {
+    public void testPolicemanNotifyFullSomeParkingLotsAreFull() throws Exception {
         Owner owner = new Owner();
-        ParkingLot lot1 = owner.createParkingLot(1);
-        ParkingLot lot2 = owner.createParkingLot(2); // This lot has 2 spaces
+        ParkingLot firstlot = owner.createParkingLot(1);
+        ParkingLot secondlot = owner.createParkingLot(2);
         Policeman policemanSpy = spy(new Policeman());
 
-        lot1.registerNotifiable(policemanSpy);
-        lot2.registerNotifiable(policemanSpy);
+        firstlot.registerNotifiable(policemanSpy);
+        secondlot.registerNotifiable(policemanSpy);
 
-        lot1.park(new Car("AP-1234", Color.RED)); // lot1 is full
-        lot2.park(new Car("AP-5678", Color.BLUE)); // lot2 still has space
+        firstlot.park(new Car("AP-1234", Color.RED));
+        secondlot.park(new Car("AP-5678", Color.BLUE));
 
-        assertThrows(ParkingLotIsFullException.class, () -> lot1.park(new Car("AP-9999", Color.GREEN)));
-        verify(policemanSpy).notifyFull(lot1.getParkingLotId());
+        assertThrows(ParkingLotIsFullException.class, () -> firstlot.park(new Car("AP-9999", Color.GREEN)));
+        verify(policemanSpy).notifyFull(firstlot.getParkingLotId());
 
-        verify(policemanSpy, Mockito.never()).notifyFull(lot2.getParkingLotId());
+        verify(policemanSpy, Mockito.never()).notifyFull(secondlot.getParkingLotId());
     }
 
     @Test
@@ -84,22 +84,44 @@ class PolicemanTest {
     @Test
     public void testPolicemanNotifyAvailableSecondParkingLotIsAvailable() throws Exception {
         Owner owner = new Owner();
-        ParkingLot lot1 = owner.createParkingLot(1);
-        ParkingLot lot2 = owner.createParkingLot(1); // Two parking lots
+        ParkingLot firstlot = owner.createParkingLot(1);
+        ParkingLot secondlot = owner.createParkingLot(1); // Two parking lots
         Policeman policemanSpy = spy(new Policeman());
 
-        lot1.registerNotifiable(policemanSpy);
-        lot2.registerNotifiable(policemanSpy);
+        firstlot.registerNotifiable(policemanSpy);
+        secondlot.registerNotifiable(policemanSpy);
 
-        Ticket ticket1 = lot1.park(new Car("AP-1234", Color.RED));
-        Ticket ticket2 = lot2.park(new Car("AP-5678", Color.BLUE));
+        Ticket firstticket = firstlot.park(new Car("AP-1234", Color.RED));
+        Ticket secondticket = secondlot.park(new Car("AP-5678", Color.BLUE));
 
-        lot2.unpark(ticket2);
+        secondlot.unpark(secondticket);
 
-        verify(policemanSpy).notifyAvailable(lot2.getParkingLotId());
+        verify(policemanSpy).notifyAvailable(secondlot.getParkingLotId());
 
-        assertDoesNotThrow(() -> lot2.park(new Car("AP-9999", Color.GREEN)));
+        assertDoesNotThrow(() -> secondlot.park(new Car("AP-9999", Color.GREEN)));
     }
 
+    @Test
+    public void testPolicemanNotifyFullSomeParkingLotsAreAvailable() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot firstlot = owner.createParkingLot(1);
+        ParkingLot secondlot = owner.createParkingLot(2);
+        Policeman policemanSpy = spy(new Policeman());
+
+        firstlot.registerNotifiable(policemanSpy);
+        secondlot.registerNotifiable(policemanSpy);
+
+
+        Ticket firstticket = firstlot.park(new Car("AP-1234", Color.RED));
+        Ticket secondticket = secondlot.park(new Car("AP-5678", Color.BLUE));
+
+        assertThrows(ParkingLotIsFullException.class, () -> firstlot.park(new Car("AP-9999", Color.GREEN)));
+        verify(policemanSpy).notifyFull(firstlot.getParkingLotId());
+
+        firstlot.unpark(firstticket);
+        verify(policemanSpy).notifyAvailable(firstlot.getParkingLotId());
+
+        assertDoesNotThrow(() -> firstlot.park(new Car("AP-8888", Color.BLACK)));
+    }
 
 }

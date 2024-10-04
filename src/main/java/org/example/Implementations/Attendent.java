@@ -1,6 +1,7 @@
 package org.example.Implementations;
 import org.example.Exceptions.*;
 import org.example.Interfaces.Attendable;
+
 import java.util.ArrayList;
 public class Attendent<T extends NextLotStratergy> implements Attendable {
     protected final ArrayList<ParkingLot> assignedParkingLots;

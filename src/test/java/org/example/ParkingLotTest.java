@@ -130,6 +130,76 @@ class ParkingLotTest {
     }
 
     @Test
+    public void testUnparkCarFromEmptyParkingLot() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(5);
+        Ticket invalidTicket = new Ticket();  // Empty parking lot
+
+        Exception exception = assertThrows(CarNotFoundException.class, () -> parkingLot.unpark(invalidTicket));
+
+        assertEquals("Car not found in the parking lot.", exception.getMessage());
+    }
+
+    @Test
+    public void testUnpark() throws Exception {
+        Owner owner = new Owner();
+        Car car = new Car("AP-1234", Color.RED);
+        ParkingLot parkingLot = owner.createParkingLot(5);
+        Ticket ticket = parkingLot.park(car);
+        Car unparkedCar = parkingLot.unpark(ticket);
+
+        assertEquals(car, unparkedCar);
+    }
+
+    @Test
+    public void testCountCarsByRedColorIsNotFoundInParkingLot() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(1);
+        int count = parkingLot.countCarsByColor(Color.RED);
+
+        assertEquals(0, count);
+    }
+
+    @Test
+    public void testCountCarsByColorNotPresent() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(1);
+        Car car = new Car("AP-1234", Color.BLUE);
+
+        parkingLot.park(car);
+        assertEquals(0, parkingLot.countCarsByColor(Color.YELLOW));
+    }
+
+    @Test
+    public void testIsCarAlreadyParkedForNonParkedCar() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(5);
+        Car car = new Car("AP-1432", Color.YELLOW);
+
+        assertFalse(parkingLot.isCarAlreadyParked(car));
+    }
+
+    @Test
+    public void testIsParkingLotFull() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(1);
+        Car car = new Car("AP-4321", Color.BLUE);
+
+        parkingLot.park(car);
+        assertTrue(parkingLot.isFull());
+    }
+
+    @Test
+    public void testIsParkingLotNotFull() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot parkingLot = owner.createParkingLot(5);
+        Car car = new Car("AP-9876", Color.GREEN);
+
+        parkingLot.park(car);
+        assertFalse(parkingLot.isFull());
+    }
+
+    @Test
     public void testCountCarsByColor() throws Exception {
         Owner owner = new Owner();
         Car firstCar = new Car("AP-1234", Color.RED);
@@ -165,17 +235,4 @@ class ParkingLotTest {
         assertEquals("Car needs registration number.", exception.getMessage());
     }
 
-    @Test
-    public void testPolicemanNotifiedWhenParkingLotAvailable() throws Exception {
-        Owner owner = new Owner();
-        ParkingLot parkingLot = owner.createParkingLot(5);
-        Policeman policeman = new Policeman();
-        parkingLot.registerNotifiable(policeman);
-
-        Car car = new Car("AP-1234", Color.RED);
-        Ticket ticket = parkingLot.park(car);
-        parkingLot.unpark(ticket);
-
-        assertFalse(parkingLot.isFull());
-    }
 }

@@ -12,8 +12,9 @@ public class ParkingLot {
     private final int totalSlots;
     private final List<Slot> slots;
     private final int parkingLotId;
-    private final HashSet<Notifiable> notifiables = new HashSet<>();
-    private Owner owner; // Added owner field
+    private final ArrayList<Notifiable> notifiables = new ArrayList<>();
+    private Owner owner;
+    private boolean isFull = false;
 
     public ParkingLot(int totalSlots, Owner owner) {
         if (totalSlots <= 0) {
@@ -50,6 +51,7 @@ public class ParkingLot {
         Slot nearestSlot = findNearestSlot();
         Ticket ticket = nearestSlot.park(car);
         if (isFull()) {
+            isFull = true;
             notifyFull();
         }
         return ticket;
@@ -59,8 +61,8 @@ public class ParkingLot {
         for (Slot slot : slots) {
             try {
                 Car car = slot.unPark(ticket);
-                if (!isFull()){
-                     notifyAvailable();
+                if (isFull && !isFull()) {  // Notify availability if it was previously full
+                    notifyAvailable();
                 }
                 return car;
             } catch (CarNotFoundException e) {
