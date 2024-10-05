@@ -9,9 +9,9 @@ public class NormalNextLotStratergy extends NextLotStratergy {
     public ParkingLot getNextLot(ArrayList<ParkingLot> assignedParkingLots) {
         ParkingLot selectedLot = null;
 
-        for (ParkingLot lot : assignedParkingLots) {
-            if (!lot.isFull()) {
-                selectedLot = lot;
+        for (ParkingLot parkinglot : assignedParkingLots) {
+            if (!parkinglot.isFull()) {
+                selectedLot = parkinglot;
             }
         }
         if(selectedLot == null) {

@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class OwnerTest {
 
@@ -31,6 +30,19 @@ class OwnerTest {
     }
 
     @Test
+    public void testExceptionWhenOwnerAssignNotOwnedParkingLot() throws Exception {
+        Owner owner = new Owner();
+        Owner otherOwner = new Owner();
+        Attendent firstAttendent = new Attendent();
+        ParkingLot firstParkingLot = otherOwner.createParkingLot(3);
+
+        assertThrows(notOwnedParkingLotException.class, () -> {
+            owner.assignParkingLotToAttendent(firstAttendent, firstParkingLot);
+        });
+    }
+
+    // Test for assignParkingLotToAttendent()
+    @Test
     public void testOwnerassignParkingLotToAttendent() throws Exception {
         Owner owner = new Owner();
         Attendent attendent = new Attendent();
@@ -38,6 +50,19 @@ class OwnerTest {
 
         assertDoesNotThrow(()->{
             owner.assignParkingLotToAttendent(attendent, firstParkingLot);
+        });
+    }
+
+    @Test
+    public void testExceptionAssignParkingLotIsNotOwnedByOwner() throws Exception {
+        Owner owner = new Owner();
+        Owner secondOwner = new Owner();
+        Attendent firstAttendant = new Attendent();
+
+        ParkingLot firstParkingLot = secondOwner.createParkingLot(3);
+
+        assertThrows(notOwnedParkingLotException.class, () -> {
+            owner.assignParkingLotToAttendent(firstAttendant, firstParkingLot);
         });
     }
 
@@ -69,18 +94,6 @@ class OwnerTest {
     }
 
     @Test
-    public void testExceptionWhenOwnerAssignNotOwnedParkingLot() throws Exception {
-        Owner owner = new Owner();
-        Owner otherOwner = new Owner();
-        Attendent firstAttendent = new Attendent();
-        ParkingLot firstParkingLot = otherOwner.createParkingLot(3);
-
-        assertThrows(notOwnedParkingLotException.class, () -> {
-            owner.assignParkingLotToAttendent(firstAttendent, firstParkingLot);
-        });
-    }
-
-    @Test
     public void testSingleAttendentCannotHaveMultipleOwners() throws Exception {
         Owner owner = new Owner();
         Owner otherOwner = new Owner();
@@ -90,11 +103,11 @@ class OwnerTest {
 
         owner.assignParkingLotToAttendent(firstAttendent, firstParkingLot);
         otherOwner.assignParkingLotToAttendent(firstAttendent, secondParkingLot);
-
     }
 
+    // Test for assignParkingLotToSelf()
     @Test
-    public void testOwnerAssignParkingLotToself() throws Exception {
+    public void testOwnerAssignParkingLotToSelf() throws Exception {
         Owner owner = new Owner();
         ParkingLot firstParkingLot = owner.createParkingLot(2);
         ParkingLot secondParkingLot = owner.createParkingLot(3);
@@ -115,6 +128,7 @@ class OwnerTest {
         });
     }
 
+    // Tests for park() in Owner
     @Test
     public void testOwnerParkingACar() throws Exception {
         Owner owner = new Owner();
@@ -126,6 +140,23 @@ class OwnerTest {
             owner.park(firstCar);
         });
     }
+
+    @Test
+    public void testParkingOwnerParkingCarInFullParkingLot() throws Exception {
+        Owner owner = new Owner();
+        ParkingLot firstParkingLot = owner.createParkingLot(1);
+        Car firstCar = new Car("AP-5678", Color.BLUE);
+        Car secondCar = new Car("AP-5678", Color.BLUE);
+        owner.assignParkingLotToSelf(firstParkingLot);
+
+        owner.park(firstCar);
+
+        assertThrows(CarAlreadyParkedException.class, () -> {
+            owner.park(secondCar);
+        });
+    }
+
+    // Tests for unpark() in Owner
 
     @Test
     public void testOwnerUnParkTheCar() throws Exception {
@@ -145,8 +176,10 @@ class OwnerTest {
         Owner owner = new Owner();
         ParkingLot firstParkingLot = owner.createParkingLot(2);
         ParkingLot secondParkingLot = owner.createParkingLot(3);
+
         Car firstCar = new Car("AP-5678", Color.BLUE);
         Attendent Attendent = new Attendent(new SmartNextLotStratergy());
+
         Attendent.assign(secondParkingLot);
         owner.assignParkingLotToSelf(firstParkingLot);
 
@@ -157,28 +190,16 @@ class OwnerTest {
         });
     }
 
-    @Test
-    public void testParkingOwnerParkingCarInFullParkingLot() throws Exception {
-        Owner owner = new Owner();
-        ParkingLot firstParkingLot = owner.createParkingLot(1);
-        Car firstCar = new Car("AP-5678", Color.BLUE);
-        Car secondCar = new Car("AP-5678", Color.BLUE);
-        owner.assignParkingLotToSelf(firstParkingLot);
-
-        owner.park(firstCar);
-
-        assertThrows(ParkingLotIsFullException.class, () -> {
-            owner.park(secondCar);
-        });
-    }
+    // Tests for notifyFull() in Owner
 
     @Test
     public void testOwnerNotifiedWhenParkingLotFull() throws Exception {
         Owner owner = new Owner();
         ParkingLot parkingLot = owner.createParkingLot(1);
+        owner.assignParkingLotToSelf(parkingLot);
 
         Car car = new Car("AP-1234", Color.RED);
-        parkingLot.park(car);
+        owner.park(car);
 
         assertThrows(ParkingLotIsFullException.class, () -> parkingLot.park(new Car("AP-5678", Color.BLUE)));
     }
@@ -223,6 +244,24 @@ class OwnerTest {
     }
 
     @Test
+    public void testNotifyFullWhenParkingLotIsFull() throws Exception {
+        Owner owner = spy(new Owner());
+        ParkingLot parkingLot = owner.createParkingLot(1);
+
+        Car firstCar = new Car("UP81", Color.BLUE);
+
+        owner.assignParkingLotToSelf(parkingLot);
+
+        verify(owner,times(0)).notifyFull(anyInt());
+
+        owner.park(firstCar);
+
+        verify(owner,times(1)).notifyFull(anyInt());
+    }
+
+    // Tests for notifyAvailable() in Owner
+
+    @Test
     public void testOwnerNotifyFullSomeParkingLotsAreAvailable() throws Exception {
         Owner owner = new Owner();
         ParkingLot firstlot = owner.createParkingLot(1);
@@ -263,4 +302,5 @@ class OwnerTest {
         
         assertDoesNotThrow(() -> parkingLot.park(new Car("AP-5678", Color.BLUE)));
     }
+
 }

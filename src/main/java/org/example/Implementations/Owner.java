@@ -1,5 +1,6 @@
 package org.example.Implementations;
 
+import org.example.Exceptions.ParkingLotAlreadyAssignmentException;
 import org.example.Exceptions.notOwnedParkingLotException;
 import org.example.Interfaces.Notifiable;
 
@@ -24,6 +25,9 @@ public class Owner extends Attendent implements Notifiable {
         if (!ownerParkingLots.contains(parkingLot)) {
             throw new notOwnedParkingLotException("This ParkingLot is not owned by the Owner");
         }
+        if (attendent.assignedParkingLots.contains(parkingLot)) {
+            throw new ParkingLotAlreadyAssignmentException("Parking lot already assigned.");
+        }
         attendent.assignedParkingLots.add(parkingLot);
     }
 
@@ -34,12 +38,14 @@ public class Owner extends Attendent implements Notifiable {
         super.assign(parkingLot);
     }
 
-    @Override
+    public void registerNotifiable(ParkingLot parkingLot, Notifiable notifiable) {
+        parkingLot.registerNotifiable(notifiable);
+    }
+
     public void notifyFull(int parkingLotId) {
         System.out.println("Owner notified: Parking lot with ID " + parkingLotId + " is full.");
     }
 
-    @Override
     public void notifyAvailable(int parkingLotId) {
         System.out.println("Owner notified: Parking lot with ID " + parkingLotId + " has available slots.");
     }

@@ -20,6 +20,8 @@ class SlotTest {
         assertTrue(slot.isFree());
     }
 
+    // Tests for park()
+
     @Test
     public void testParkCarInFreeSlot() throws SlotIsOccupiedException {
         Slot slot = new Slot();
@@ -45,6 +47,19 @@ class SlotTest {
     }
 
     @Test
+    public void testCheckingCarInParkingSlot() throws SlotIsOccupiedException {
+        Slot slot = new Slot();
+        Car car = new Car("AP-1234", Color.RED);
+
+        slot.park(car);
+
+        assertTrue(slot.checkingCarInParkingSlot(car));
+        assertFalse(slot.checkingCarInParkingSlot(new Car("AP-5678", Color.BLUE)));
+    }
+
+    //Tests for Unpark()
+
+    @Test
     public void testUnparkCarFromOccupiedSlot() throws SlotIsOccupiedException, CarNotFoundException {
         Slot slot = new Slot();
         Car car = new Car("AP-1234", Color.RED);
@@ -62,6 +77,20 @@ class SlotTest {
 
         assertThrows(CarNotFoundException.class, () -> slot.unPark(new Ticket()));
     }
+
+    @Test
+    public void testUnparkCarWithInvalidTicket() throws SlotIsOccupiedException {
+        Slot slot = new Slot();
+        Car car = new Car("AP-1234", Color.RED);
+
+        slot.park(car);
+
+        Ticket invalidTicket = new Ticket();
+
+        assertThrows(InvalidTicketException.class, () -> slot.unPark(invalidTicket));
+    }
+
+    //tests for hasCarOfColor() and hasCarWithRegistrationNumber()
 
     @Test
     public void testHasCarOfSameColor() throws SlotIsOccupiedException {
@@ -103,27 +132,6 @@ class SlotTest {
         assertThrows(CarNeedsRegistrationNumberException.class, () -> slot.hasCarWithRegistrationNumber("AP-5678"));
     }
 
-    @Test
-    public void testCheckingCarInParkingSlot() throws SlotIsOccupiedException {
-        Slot slot = new Slot();
-        Car car = new Car("AP-1234", Color.RED);
 
-        slot.park(car);
-
-        assertTrue(slot.checkingCarInParkingSlot(car));
-        assertFalse(slot.checkingCarInParkingSlot(new Car("AP-5678", Color.BLUE)));
-    }
-
-    @Test
-    public void testUnparkCarWithInvalidTicket() throws SlotIsOccupiedException {
-        Slot slot = new Slot();
-        Car car = new Car("AP-1234", Color.RED);
-
-        slot.park(car);
-
-        Ticket invalidTicket = new Ticket();
-
-        assertThrows(InvalidTicketException.class, () -> slot.unPark(invalidTicket));
-    }
 }
 

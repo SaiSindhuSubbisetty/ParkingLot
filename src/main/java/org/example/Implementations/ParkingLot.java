@@ -13,25 +13,24 @@ public class ParkingLot {
     private final List<Slot> slots;
     private final int parkingLotId;
     private final ArrayList<Notifiable> notifiables = new ArrayList<>();
-    private Owner owner;
+    private final Owner owner;
     private boolean isFull = false;
 
     public ParkingLot(int totalSlots, Owner owner) {
         if (totalSlots <= 0) {
-            throw new IllegalArgumentException("Parking lot size must be positive.");
+            throw new CannotCreateParkingLotException("Parking lot size must be positive.");
         }
         if (owner == null) {
             throw new CannotCreateParkingLotWithoutOwner("Parking lot cannot be created without an owner.");
         }
-        this.totalSlots = totalSlots;
-        this.owner = owner;
-        this.parkingLotId = this.hashCode();
         this.slots = new ArrayList<>(totalSlots);
         for (int i = 0; i < totalSlots; i++) {
             slots.add(new Slot());
         }
+        this.totalSlots = totalSlots;
+        this.owner = owner;
+        this.parkingLotId = this.hashCode();
     }
-
     private Slot findNearestSlot() {
         for (Slot slot : slots) {
             if (slot.isFree()) {
@@ -61,15 +60,15 @@ public class ParkingLot {
         for (Slot slot : slots) {
             try {
                 Car car = slot.unPark(ticket);
-                if (isFull && !isFull()) {  // Notify availability if it was previously full
+                if (isFull && !isFull()) {
                     notifyAvailable();
                 }
                 return car;
-            } catch (CarNotFoundException e) {
+            } catch (InvalidTicketException e) {
                 // Continue searching in other slots
             }
         }
-        throw new CarNotFoundException("Car not found in the parking lot.");
+        throw new InvalidTicketException("Invalid ticket.");
     }
 
     public boolean isCarAlreadyParked(Car car) {
